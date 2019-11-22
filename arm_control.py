@@ -1,7 +1,7 @@
 import pygame
-import main_control as mc
+import board_control as bc
 
-mc.calibrate_all()
+bc.calibrate_all()
 
 # initialize pygame
 pygame.init()
@@ -83,18 +83,18 @@ while done == False:
 		textPrint.indent()
 		
 		# handle axis inputs
-		for axis in range(axes_count):
-			axis_value = joystick.get_axis(axis)
-			textPrint.print(screen, "Axis {} value: {:>6.3f}".format(axis, axis_value))
+		for controller_axis in range(axes_count):
+			axis_value = joystick.get_axis(controller_axis)
+			textPrint.print(screen, "Axis {} value: {:>6.3f}".format(controller_axis, axis_value))
 			
-			if axis == 0 and abs(axis_value) >= 0.70:
-				mc.move_axis(0, reduction_100, 1)
+			if controller_axis == 0 and abs(axis_value) >= 0.70:
+				bc.move_axis(1, bc.reduction_100, axis_value)
 
-			if axis == 1 and abs(axis_value) >= 0.70:
-				mc.move_axis(0, reduction_100, 1)
+			if controller_axis == 1 and abs(axis_value) >= 0.70:
+				bc.move_axis(2, bc.reduction_100, axis_value)
 
-			if axis == 2 and abs(axis_value) >= 0.70:
-				mc.move_axis(0, reduction_100, 1)
+			if controller_axis == 3 and abs(axis_value) >= 0.70:
+				bc.move_axis(3, bc.reduction_100, axis_value)
 
 		# # handle the button inputs -- output is 0/1
 		# for button in range(button_count):
