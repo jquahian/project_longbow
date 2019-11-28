@@ -1,24 +1,20 @@
 import odrive
 import time
-import degrees_calc as dc
 import serial
 from odrive.enums import *
-
-# returns half a degree for the 100 gearing reduction
-reduction_100 = dc.return_counts(0.5, 100)
 
 # board with axis 1, 2
 board_1_num = '207D37A53548'
 
 # board with axis 3, 4
-board_2_num = '207C377E3548'
+# board_2_num = '207C377E3548'
 
 # board with axis 5, 6
 # board_3_num = '207D37A53548'
 
 # find the odrives
 odrive_1 = odrive.find_any(serial_number=board_1_num)
-odrive_2 = odrive.find_any(serial_number=board_2_num)
+# odrive_2 = odrive.find_any(serial_number=board_2_num)
 # odrive_3 = odrive.find_any(serial_number=board_3_num)
 
 odrive_boards = [odrive_1]
@@ -45,13 +41,13 @@ def calibrate_all():
 		print(f'\nboard 1 axis 1 in CLOSED LOOP CONTROL')
 		board.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 	
-	print(f'\nnow calibrating board 2 axis 0')
-	odrive_2.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
-	while odrive_2.axis0.current_state != AXIS_STATE_IDLE:
-		time.sleep(0.1)
+	# print(f'\nnow calibrating board 2 axis 0')
+	# odrive_2.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
+	# while odrive_2.axis0.current_state != AXIS_STATE_IDLE:
+	# 	time.sleep(0.1)
 
-	print(f'\nboard 2 axis 0 in CLOSED LOOP CONTROL')
-	odrive_2.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
+	# print(f'\nboard 2 axis 0 in CLOSED LOOP CONTROL')
+	# odrive_2.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
 	print('\n\n calibration complete')
 
@@ -64,5 +60,5 @@ def move_axis(motor_axis, num_degrees, axis_value):
 	if motor_axis == 2:
 		odrive_1.axis1.controller.pos_setpoint += (num_degrees * axis_value)
 
-	if motor_axis == 3:
-		odrive_2.axis0.controller.pos_setpoint += (num_degrees * axis_value)
+	# if motor_axis == 3:
+	# 	odrive_2.axis0.controller.pos_setpoint += (num_degrees * axis_value)
