@@ -93,15 +93,13 @@ while done == False:
 			textPrint.print(screen, "Axis {} value: {:>6.3f}".format(controller_axis, axis_value))
 			
 			if controller_axis == 0 and abs(axis_value) >= 0.70:
-				gearing = degrees_calc.return_counts(0.5, 125)
 				bc.move_axis(1, reduction_125, axis_value)
 
 			if controller_axis == 1 and abs(axis_value) >= 0.70:
-				gearing = degrees_calc.return_counts(0.5, 100)
 				bc.move_axis(2, reduction_125, axis_value)
 
-			# if controller_axis == 3 and abs(axis_value) >= 0.70:
-			# 	bc.move_axis(3, bc.reduction_100, axis_value)
+			if controller_axis == 3 and abs(axis_value) >= 0.70:
+				bc.move_axis(3, reduction_125, -axis_value)
 
 		# # handle the button inputs -- output is 0/1
 		# for button in range(button_count):
