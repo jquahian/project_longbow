@@ -23,9 +23,8 @@ pygame.joystick.init()
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
-# returns encoder counts for (i) degree per step based on (ii) gear reduction
-reduction_100 = degrees_calc.return_counts(0.5, 100)
-reduction_125 = degrees_calc.return_counts(0.5, 125)
+# returns encoder counts for (degree per step, reduction)
+reduction_125 = degrees_calc.return_counts(0.25, 125)
 
 class TextPrint:
 	def __init__(self):
@@ -62,8 +61,9 @@ while done == False:
 
 	screen.fill(WHITE)
 	textPrint.reset()
-	joystick_count = pygame.joystick.get_count()
 
+	# joystick input
+	joystick_count = pygame.joystick.get_count()
 	for i in range(joystick_count):
 		# initialize our joystick
 		joystick = pygame.joystick.Joystick(i)
@@ -93,19 +93,47 @@ while done == False:
 			textPrint.print(screen, "Axis {} value: {:>6.3f}".format(controller_axis, axis_value))
 			
 			if controller_axis == 0 and abs(axis_value) >= 0.70:
-				gearing = degrees_calc.return_counts(0.5, 125)
-				bc.move_axis(1, reduction_125, axis_value)
+				bc.move_axis(1,
+							reduction_125,
+							axis_value)
 
 			if controller_axis == 1 and abs(axis_value) >= 0.70:
-				gearing = degrees_calc.return_counts(0.5, 100)
-				bc.move_axis(2, reduction_125, axis_value)
+				bc.move_axis(2,
+							reduction_125,
+							axis_value)
 
-			# if controller_axis == 3 and abs(axis_value) >= 0.70:
-			# 	bc.move_axis(3, bc.reduction_100, axis_value)
+			# switch axis value sign to correct joystick position
+			if controller_axis == 3 and abs(axis_value) >= 0.70:
+				bc.move_axis(3, 
+							reduction_125, 
+							-axis_value)
 
-		# # handle the button inputs -- output is 0/1
-		# for button in range(button_count):
-		# 	btn_value = joystick.get_button(button)
+			if controller_axis == 4 and abs(axis_value) >= 0.70:
+				bc.move_axis(4, 
+							reduction_125, 
+							axis_value)
+			
+			if controller_axis == 5 and abs(axis_value) >= 0.70:
+				bc.move_axis(5, 
+							reduction_125, 
+							axis_value)
+
+			if controller_axis == 6 and abs(axis_value) >= 0.70:
+				bc.move_axis(6, 
+							reduction_125, 
+							axis_value)
+
+		# button input
+		# button outputs are either 0/1
+		for button in range(button_count):
+			btn_value = joystick.get_button(button)
+			
+			# select button
+			# home robot (later) and shutdown program
+			if button == 6 and btn_value == 1:
+				bc.home_axis()
+				print("SHUTTING DOWN")
+				done = True
 
 	pygame.display.flip()
 
