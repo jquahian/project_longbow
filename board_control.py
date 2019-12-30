@@ -4,7 +4,7 @@ import serial
 from odrive.enums import *
 
 # board with axis 1, 2
-board_1_num = '207D37A53548'
+board_1_num = '20873592524B'
 
 # board with axis 3, 4
 board_2_num = '387F37573437'
@@ -21,7 +21,6 @@ odrive_boards = [odrive_1, odrive_2, odrive_3]
 
 # calibrate odrives and set to closed loop control
 def calibrate_all():	
-	# loop through the stupid list...
 	print('\n\nbeginning calibration...')
 
 	for board in odrive_boards:

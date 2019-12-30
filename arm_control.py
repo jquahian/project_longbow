@@ -11,7 +11,7 @@ pygame.init()
 done = False
 
 # some window size
-size = [300, 500]
+size = [500, 500]
 
 screen = pygame.display.set_mode(size)
 
@@ -92,34 +92,40 @@ while done == False:
 			axis_value = joystick.get_axis(controller_axis)
 			textPrint.print(screen, "Axis {} value: {:>6.3f}".format(controller_axis, axis_value))
 			
+			# axis 1
 			if controller_axis == 0 and abs(axis_value) >= 0.70:
 				bc.move_axis(1,
 							reduction_125,
 							axis_value)
 
+			# axis 2
 			if controller_axis == 1 and abs(axis_value) >= 0.70:
 				bc.move_axis(2,
 							reduction_125,
 							axis_value)
 
-			# switch axis value sign to correct joystick position
+			# axis 3
 			if controller_axis == 3 and abs(axis_value) >= 0.70:
 				bc.move_axis(3, 
 							reduction_125, 
-							-axis_value)
+							axis_value)
 
-			if controller_axis == 4 and abs(axis_value) >= 0.70:
+			# axis 4
+			# switch axis value sign to correct joystick position
+			if controller_axis == 2 and abs(axis_value) >= 0.70:
 				bc.move_axis(4, 
 							reduction_125, 
-							axis_value)
-			
-			if controller_axis == 5 and abs(axis_value) >= 0.70:
+							-axis_value/2)
+
+			# axis 5 - counter-clockwise
+			if controller_axis == 4 and abs(axis_value) >= 0.70:
 				bc.move_axis(5, 
 							reduction_125, 
-							axis_value)
+							-axis_value)
 
-			if controller_axis == 6 and abs(axis_value) >= 0.70:
-				bc.move_axis(6, 
+			# axis 5 - clockwise
+			if controller_axis == 5 and abs(axis_value) >= 0.70:
+				bc.move_axis(5, 
 							reduction_125, 
 							axis_value)
 
@@ -127,8 +133,20 @@ while done == False:
 		# button outputs are either 0/1
 		for button in range(button_count):
 			btn_value = joystick.get_button(button)
+
+			# axis 6 - counter-clockwise
+			if button == 4 and btn_value == 1:
+				bc.move_axis(6, 
+							reduction_125, 
+							-axis_value)
 			
-			# select button
+			# axis 6 - clockwise
+			if button == 5 and btn_value == 1:
+				bc.move_axis(6, 
+							reduction_125, 
+							axis_value)
+
+			# back button
 			# home robot (later) and shutdown program
 			if button == 6 and btn_value == 1:
 				bc.home_axis()
