@@ -24,7 +24,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 # returns encoder counts for (degree per step, reduction)
-reduction_125 = degrees_calc.return_counts(0.5, 125)
+reduction_125 = degrees_calc.return_counts(0.25, 125)
 
 class TextPrint:
 	def __init__(self):

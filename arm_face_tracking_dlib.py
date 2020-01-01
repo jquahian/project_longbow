@@ -17,11 +17,14 @@ import dlib
 import cv2
 import math
 import board_control as bc
+import degrees_calc
+
+reduction_125 = degrees_calc.return_counts(0.5, 125)
 
 video_width = 1000
 
-head_vertical_threshold = 25
-head_horizontal_threshold = 25
+head_vertical_threshold = 35
+head_horizontal_threshold = 30
 head_rotation_threshold = 15
 
 # construct the argument parse and parse the arguments
@@ -120,12 +123,12 @@ while True:
 		# move the arm to match the vertical displacement of the face
 		if abs(face_vert_displacement) > head_vertical_threshold:
 			if face_vert_displacement > 0:
-				speed_direction = 1
+				speed_direction = 2.0
 			else:
-				speed_direction = -1
+				speed_direction = -2.0
 
-			bc.move_axis(motor_axis = 3,
-						num_degrees = 0.5,
+			bc.move_axis(motor_axis = 5,
+						num_degrees = reduction_125,
 						axis_value = speed_direction)
 
 		# move the arm to match the horizontal displacement of the face
@@ -135,17 +138,18 @@ while True:
 			else:
 				speed_direction = 1
 			bc.move_axis(motor_axis = 1,
-						num_degrees = 0.5,
+						num_degrees = reduction_125,
 						axis_value = speed_direction)
 
 		# move the arm to match the rotational displacement of the face
 		if abs(eye_theta) >= head_rotation_threshold:
 			if eye_theta > 0:
-				speed_direction = 1
+				speed_direction = 2.0
 			else:
-				speed_direction = -1
-			bc.move_axis(motor_axis = 6,
-						num_degrees = 0.5,
+				speed_direction = -2.0
+
+			bc.move_axis(motor_axis = 6, 
+						num_degrees = reduction_125, 
 						axis_value = speed_direction)
 
 		# loop over the (x, y)-coordinates for the facial landmarks
