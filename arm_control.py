@@ -24,7 +24,7 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 # returns encoder counts for (degree per step, reduction)
-reduction_125 = degrees_calc.return_counts(0.25, 125)
+reduction_125 = degrees_calc.return_counts(0.5, 125)
 
 class TextPrint:
 	def __init__(self):
@@ -94,17 +94,12 @@ while done == False:
 			
 			# axis 1
 			if controller_axis == 0 and abs(axis_value) >= 0.70:
-<<<<<<< HEAD
 				bc.move_axis(1,
 							reduction_125,
 							axis_value)
-=======
-				bc.move_axis(1, reduction_125, axis_value)
->>>>>>> c616a88913d4e1da6837ed05f91219b67f9bfcf3
 
 			# axis 2
 			if controller_axis == 1 and abs(axis_value) >= 0.70:
-<<<<<<< HEAD
 				bc.move_axis(2,
 							reduction_125,
 							axis_value)
@@ -157,16 +152,6 @@ while done == False:
 				bc.home_axis()
 				print("SHUTTING DOWN")
 				done = True
-=======
-				bc.move_axis(2, reduction_125, axis_value)
-
-			if controller_axis == 3 and abs(axis_value) >= 0.70:
-				bc.move_axis(3, reduction_125, -axis_value)
-
-		# # handle the button inputs -- output is 0/1
-		# for button in range(button_count):
-		# 	btn_value = joystick.get_button(button)
->>>>>>> c616a88913d4e1da6837ed05f91219b67f9bfcf3
 
 	pygame.display.flip()
 
