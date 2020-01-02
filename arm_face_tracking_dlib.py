@@ -24,8 +24,8 @@ reduction_125 = degrees_calc.return_counts(0.5, 125)
 video_width = 1000
 
 head_vertical_threshold = 35
-head_horizontal_threshold = 30
-head_rotation_threshold = 15
+head_horizontal_threshold = 25
+head_rotation_threshold = 17
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -123,9 +123,9 @@ while True:
 		# move the arm to match the vertical displacement of the face
 		if abs(face_vert_displacement) > head_vertical_threshold:
 			if face_vert_displacement > 0:
-				speed_direction = 2.0
+				speed_direction = 1.0
 			else:
-				speed_direction = -2.0
+				speed_direction = -1.0
 
 			bc.move_axis(motor_axis = 5,
 						num_degrees = reduction_125,
@@ -134,9 +134,9 @@ while True:
 		# move the arm to match the horizontal displacement of the face
 		if abs(face_hor_displacement) > head_horizontal_threshold:
 			if face_hor_displacement > 0:
-				speed_direction = -1
+				speed_direction = -1.0
 			else:
-				speed_direction = 1
+				speed_direction = 1.0
 			bc.move_axis(motor_axis = 1,
 						num_degrees = reduction_125,
 						axis_value = speed_direction)
