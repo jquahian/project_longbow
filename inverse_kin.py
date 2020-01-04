@@ -2,7 +2,7 @@ import math
 
 # this is for 3 DOF rotation along the Y axis
 # link lengths
-a_1 = 10
+a_1 = 105
 a_2 = 10
 a_3 = 10
 
