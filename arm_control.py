@@ -7,8 +7,6 @@ bc.calibrate_all()
 # initialize pygame
 pygame.init()
 
-print("test")
-
 # flag to say when the 'game' is done
 done = False
 
