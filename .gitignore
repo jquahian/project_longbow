@@ -1,4 +1,4 @@
 *.dat
 /longbow_env
-/.vscode
+.vscode
 /__pyarche__
