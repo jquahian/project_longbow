@@ -20,7 +20,7 @@ import board_control as bc
 import degrees_calc
 
 reduction_125 = degrees_calc.return_counts(1.0, 125)
-reduction_5 = degrees_calc.return_counts(1.0, 5)
+reduction_5 = degrees_calc.return_counts(0.5, 5)
 
 video_width = 1000
 
