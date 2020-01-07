@@ -24,7 +24,8 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 # returns encoder counts for (degree per step, reduction)
-reduction_125 = degrees_calc.return_counts(0.25, 125)
+reduction_125 = degrees_calc.return_counts(1.0, 125)
+reduction_5 = degrees_calc.return_counts(1.0, 5)
 
 class TextPrint:
 	def __init__(self):
@@ -134,16 +135,17 @@ while done == False:
 		for button in range(button_count):
 			btn_value = joystick.get_button(button)
 
+			# axis 6 has a 5:1 reduction
 			# axis 6 - counter-clockwise
 			if button == 4 and btn_value == 1:
 				bc.move_axis(6, 
-							reduction_125, 
+							reduction_5, 
 							-axis_value)
 			
 			# axis 6 - clockwise
 			if button == 5 and btn_value == 1:
 				bc.move_axis(6, 
-							reduction_125, 
+							reduction_5, 
 							axis_value)
 
 			# back button

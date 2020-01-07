@@ -19,13 +19,14 @@ import math
 import board_control as bc
 import degrees_calc
 
-reduction_125 = degrees_calc.return_counts(0.5, 125)
+reduction_125 = degrees_calc.return_counts(1.0, 125)
+reduction_5 = degrees_calc.return_counts(1.0, 5)
 
 video_width = 1000
 
 head_vertical_threshold = 35
 head_horizontal_threshold = 25
-head_rotation_threshold = 17
+head_rotation_threshold = 10
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -144,12 +145,12 @@ while True:
 		# move the arm to match the rotational displacement of the face
 		if abs(eye_theta) >= head_rotation_threshold:
 			if eye_theta > 0:
-				speed_direction = 2.0
+				speed_direction = 1.0
 			else:
-				speed_direction = -2.0
+				speed_direction = -1.0
 
 			bc.move_axis(motor_axis = 6, 
-						num_degrees = reduction_125, 
+						num_degrees = reduction_5, 
 						axis_value = speed_direction)
 
 		# loop over the (x, y)-coordinates for the facial landmarks
