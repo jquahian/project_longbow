@@ -24,8 +24,8 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 
 # returns encoder counts for (degree per step, reduction)
-reduction_125 = degrees_calc.return_counts(1.0, 125)
-reduction_5 = degrees_calc.return_counts(1.0, 5)
+reduction_125 = degrees_calc.return_counts(0.2, 125)
+reduction_5 = degrees_calc.return_counts(0.5, 5)
 
 class TextPrint:
 	def __init__(self):
@@ -116,7 +116,7 @@ while done == False:
 			if controller_axis == 2 and abs(axis_value) >= 0.70:
 				bc.move_axis(4, 
 							reduction_125, 
-							-axis_value/2)
+							-axis_value)
 
 			# axis 5 - counter-clockwise
 			if controller_axis == 4 and abs(axis_value) >= 0.70:
