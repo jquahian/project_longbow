@@ -27,20 +27,18 @@ class App(QWidget):
         layout = QGridLayout()
         self.setLayout(layout)
         
-        self.calibrate_btn = QPushButton("Calibrate")
+        self.calibrate_btn = QPushButton("Calibrate All")
         layout.addWidget(self.calibrate_btn, 0, 0)
+        self.calibrate_btn.clicked.connect(lambda: self.calibrate_all())
 
         self.joint_header = QLabel("Joint \nNumber")
         layout.addWidget(self.joint_header, 1, 0)
 
-        self.degree_readout_header = QLabel("Degree \nCurrent")
+        self.degree_readout_header = QLabel("Current \nDegree")
         layout.addWidget(self.degree_readout_header, 1, 1)
 
-        self.degree_readout_header = QLabel("Degree \nTarget")
+        self.degree_readout_header = QLabel("Target \nDegree")
         layout.addWidget(self.degree_readout_header, 1, 3)
-
-        self.accept_all_btn = QPushButton("ACCEPT ALL")
-        layout.addWidget(self.accept_all_btn, 10, 4)
 
         self.joint_1_header = QLabel('Joint 1')
         self.joint_2_header = QLabel('Joint 2')
@@ -117,26 +115,26 @@ class App(QWidget):
             lambda: self.input_slider_value(self.joint_6_slider, self.readout_6))
 
         self.accept_1.clicked.connect(
-            lambda: self.accept_slider_value(self.joint_1_current_degrees_label, self.readout_1, 125))
+            lambda: self.set_degrees(1, self.joint_1_current_degrees_label, self.readout_1, 125))
         self.accept_2.clicked.connect(
-            lambda: self.accept_slider_value(self.joint_2_current_degrees_label, self.readout_2, 125))
+            lambda: self.set_degrees(2, self.joint_2_current_degrees_label, self.readout_2, 125))
         self.accept_3.clicked.connect(
-            lambda: self.accept_slider_value(self.joint_3_current_degrees_label, self.readout_3, 125))
+            lambda: self.set_degrees(3, self.joint_3_current_degrees_label, self.readout_3, 125))
         self.accept_4.clicked.connect(
-            lambda: self.accept_slider_value(self.joint_4_current_degrees_label, self.readout_4, 125))
+            lambda: self.set_degrees(4, self.joint_4_current_degrees_label, self.readout_4, 125))
         self.accept_5.clicked.connect(
-            lambda: self.accept_slider_value(self.joint_5_current_degrees_label, self.readout_5, 125))
+            lambda: self.set_degrees(5, self.joint_5_current_degrees_label, self.readout_5, 125))
         self.accept_6.clicked.connect(
-            lambda: self.accept_slider_value(self.joint_6_current_degrees_label, self.readout_6, 5))
-        
-        for i in range(len(readouts)):
-            self.accept_all_btn.clicked.connect(
-                lambda: self.accept_slider_value(joint_current_degrees[i], readouts[i]))
-        
+            lambda: self.set_degrees(6, self.joint_6_current_degrees_label, self.readout_6, 5))
+    
+    def calibrate_all(self):
+        # bc.calibrate_all()
+        pass
+     
     def angle_slider(self):
         self.joint_degree_slider = QSlider(Qt.Horizontal)
-        self.joint_degree_slider.setMinimum(0)
-        self.joint_degree_slider.setMaximum(18000)
+        self.joint_degree_slider.setMinimum(-27000)
+        self.joint_degree_slider.setMaximum(27000)
         self.joint_degree_slider.setValue(0)
 
         return self.joint_degree_slider
@@ -145,12 +143,12 @@ class App(QWidget):
         degree_readout = round(joint_slider_num.value()/100, 1)
         joint_readout_num.setText(str(degree_readout))
 
-    def accept_slider_value(self, joint_degrees_label, readout_value, gear_ratio):
+    def set_degrees(self, joint_number, joint_degrees_label, readout_value, gear_ratio):
         joint_degrees_label.setText(str(readout_value.text()))
         motor_encoder_count = dc.return_counts(float(joint_degrees_label.text()), gear_ratio)
-        return motor_encoder_count
+        # bc.move_axis_by_count(joint_number, motor_encoder_count)
 
-        print(f'degrees: {joint_degrees_label.text()}, \ngear ratio: {gear_ratio}, \nencoder counts: {motor_encoder_count}')
+        print(f'degrees: {joint_degrees_label.text()}, \ngear ratio: {gear_ratio}, \nencoder counts: {motor_encoder_count}\n')
 
 def main():
     app = QApplication(sys.argv)

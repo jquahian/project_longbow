@@ -47,7 +47,7 @@ def calibrate_all():
 
 def move_axis(motor_axis, num_degrees, axis_value):
 	
-	# send commands to each joint
+	# send commands to each joint by degrees
 	if motor_axis == 1:
 		odrive_1.axis0.controller.pos_setpoint += (num_degrees * axis_value)
 	
@@ -65,6 +65,26 @@ def move_axis(motor_axis, num_degrees, axis_value):
 
 	if motor_axis == 6:
 		odrive_3.axis1.controller.pos_setpoint += (num_degrees * axis_value)
+
+def move_axis_by_count(motor_axis, encoder_counts):
+	
+	if motor_axis == 1:
+		odrive_1.axis0.controller.pos_setpoint = encoder_counts
+
+	if motor_axis == 2:
+		odrive_1.axis1.controller.pos_setpoint = encoder_counts
+
+	if motor_axis == 3:
+		odrive_2.axis0.controller.pos_setpoint = encoder_counts
+
+	if motor_axis == 4:
+		odrive_2.axis1.controller.pos_setpoint = encoder_counts
+
+	if motor_axis == 5:
+		odrive_3.axis0.controller.pos_setpoint = encoder_counts
+
+	if motor_axis == 6:
+		odrive_3.axis1.controller.pos_setpoint = encoder_counts
 
 def home_axis():
 	print("HOMING AXIS")
