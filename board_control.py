@@ -13,9 +13,9 @@ board_2_num = '387F37573437'
 board_3_num = '207D37A53548'
 
 # find the odrives
-odrive_1 = odrive.find_any(serial_number=board_1_num)
-odrive_2 = odrive.find_any(serial_number=board_2_num)
-odrive_3 = odrive.find_any(serial_number=board_3_num)
+odrive_1 = odrive.find_any(serial_number = board_1_num)
+odrive_2 = odrive.find_any(serial_number = board_2_num)
+odrive_3 = odrive.find_any(serial_number = board_3_num)
 
 odrive_boards = [odrive_1, odrive_2, odrive_3]
 

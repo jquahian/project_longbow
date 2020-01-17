@@ -1,5 +1,6 @@
 import sys
 import degrees_calc as dc
+import inverse_kin as ik
 # import board_control as bc
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
@@ -16,7 +17,7 @@ class App(QWidget):
         self.top = 100
 
         # app size
-        self.width = 1280
+        self.width = 1980
         self.height = 350
         self.longbow_UI()
 
@@ -45,6 +46,10 @@ class App(QWidget):
 
         self.encoder_pos_header = QLabel("Current \nEncoder \nPosition")
         layout.addWidget(self.encoder_pos_header, 1, 6)
+
+        self.accept_all_btn = QPushButton("Accept All")
+        layout.addWidget(self.accept_all_btn, 10, 6)
+        self.accept_all_btn.clicked.connect(lambda: self.accept_all())
 
         self.joint_1_header = QLabel('Joint 1')
         self.joint_2_header = QLabel('Joint 2')
@@ -158,7 +163,21 @@ class App(QWidget):
     def calibrate_all(self):
         # bc.calibrate_all()
         pass
-     
+    
+    def accept_all(self):
+        self.set_degrees(1, self.joint_1_current_degrees_label, 
+                        self.readout_1, 125, self.encoder_pos_1)
+        self.set_degrees(2, self.joint_2_current_degrees_label, 
+                        self.readout_2, 125, self.encoder_pos_2)
+        self.set_degrees(3, self.joint_3_current_degrees_label, 
+                        self.readout_3, 125, self.encoder_pos_3)
+        self.set_degrees(4, self.joint_4_current_degrees_label, 
+                        self.readout_4, 125, self.encoder_pos_4)
+        self.set_degrees(5, self.joint_5_current_degrees_label, 
+                        self.readout_5, 125, self.encoder_pos_5)
+        self.set_degrees(6, self.joint_6_current_degrees_label, 
+                        self.readout_6, 5, self.encoder_pos_6)
+
     def angle_slider(self):
         self.joint_degree_slider = QSlider(Qt.Horizontal)
         self.joint_degree_slider.setMinimum(-27000)
