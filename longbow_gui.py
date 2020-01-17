@@ -18,7 +18,7 @@ class App(QWidget):
 
         # app size
         self.width = 1980
-        self.height = 350
+        self.height = 500
         self.longbow_UI()
 
     def longbow_UI(self):
@@ -32,6 +32,10 @@ class App(QWidget):
         layout.addWidget(self.calibrate_btn, 0, 0)
         self.calibrate_btn.clicked.connect(lambda: self.calibrate_all())
 
+        self.home_joints_btn = QPushButton("Home")
+        layout.addWidget(self.home_joints_btn, 0, 1)
+        self.home_joints_btn.clicked.connect(lambda: self.home_joints())
+
         self.joint_header = QLabel("Joint \nNumber")
         layout.addWidget(self.joint_header, 1, 0)
 
@@ -41,15 +45,22 @@ class App(QWidget):
         self.degree_readout_header = QLabel("Current \nDegree")
         layout.addWidget(self.degree_readout_header, 1, 2)
 
-        self.degree_readout_header = QLabel("Target \nDegree")
-        layout.addWidget(self.degree_readout_header, 1, 4)
+        self.target_degree_header = QLabel("Target \nDegree")
+        layout.addWidget(self.target_degree_header, 1, 4)
 
         self.encoder_pos_header = QLabel("Current \nEncoder \nPosition")
         layout.addWidget(self.encoder_pos_header, 1, 6)
 
+        self.coordinate_header = QLabel("Coordinate \nInput")
+        layout.addWidget(self.coordinate_header, 1, 7)
+
         self.accept_all_btn = QPushButton("Accept All")
-        layout.addWidget(self.accept_all_btn, 10, 6)
+        layout.addWidget(self.accept_all_btn, 10, 5)
         self.accept_all_btn.clicked.connect(lambda: self.accept_all())
+
+        self.move_to_coord_btn = QPushButton("To Coordinates")
+        layout.addWidget(self.move_to_coord_btn, 10, 7)
+        self.move_to_coord_btn.clicked.connect(lambda: self.move_to_coordinates())
 
         self.joint_1_header = QLabel('Joint 1')
         self.joint_2_header = QLabel('Joint 2')
@@ -93,12 +104,27 @@ class App(QWidget):
         self.accept_5 = QPushButton('Accept')
         self.accept_6 = QPushButton('Accept')
 
-        self.encoder_pos_1 = QLabel('0.0000')
-        self.encoder_pos_2 = QLabel('0.0000')
-        self.encoder_pos_3 = QLabel('0.0000')
-        self.encoder_pos_4 = QLabel('0.0000')
-        self.encoder_pos_5 = QLabel('0.0000')
-        self.encoder_pos_6 = QLabel('0.0000')
+        self.encoder_pos_1 = QLabel('0')
+        self.encoder_pos_2 = QLabel('0')
+        self.encoder_pos_3 = QLabel('0')
+        self.encoder_pos_4 = QLabel('0')
+        self.encoder_pos_5 = QLabel('0')
+        self.encoder_pos_6 = QLabel('0')
+
+        self.x_coord_label = QLabel('X Coorinate:')
+        self.x_coord_input = QLineEdit()
+        self.x_coord_input.setValidator(QIntValidator())
+        self.x_coord_input.setMaxLength(4)
+
+        self.y_coord_label = QLabel('Y Coorinate:')
+        self.y_coord_input = QLineEdit()
+        self.y_coord_input.setValidator(QIntValidator())
+        self.y_coord_input.setMaxLength(4)
+
+        self.z_coord_label = QLabel('Z Coorinate:')
+        self.z_coord_input = QLineEdit()
+        self.z_coord_input.setValidator(QIntValidator())
+        self.z_coord_input.setMaxLength(4)
 
         joint_headers = [self.joint_1_header, self.joint_2_header, self.joint_3_header, 
                          self.joint_4_header, self.joint_5_header, self.joint_6_header]
@@ -125,6 +151,9 @@ class App(QWidget):
         encoder_pos_readouts = [self.encoder_pos_1, self.encoder_pos_2, self.encoder_pos_3, 
                                 self.encoder_pos_4, self.encoder_pos_5, self.encoder_pos_6]
 
+        coordinate_inputs = [self.x_coord_label, self.x_coord_input, self.y_coord_label, 
+                             self.y_coord_input, self.z_coord_label, self.z_coord_input]
+
         for i in range(6):
             layout.addWidget(joint_headers[i], 2 + i, 0)
             layout.addWidget(joint_gear_ratios[i], 2 + i, 1)
@@ -133,6 +162,7 @@ class App(QWidget):
             layout.addWidget(readouts[i], 2 + i, 4)
             layout.addWidget(accept_btns[i], 2 + i, 5)
             layout.addWidget(encoder_pos_readouts[i], 2 + i, 6)
+            layout.addWidget(coordinate_inputs[i], 2 + i, 7)
 
         self.joint_1_slider.valueChanged.connect(
             lambda: self.input_slider_value(self.joint_1_slider, self.readout_1))
@@ -159,10 +189,30 @@ class App(QWidget):
             lambda: self.set_degrees(5, self.joint_5_current_degrees_label, self.readout_5, 125, self.encoder_pos_5))
         self.accept_6.clicked.connect(
             lambda: self.set_degrees(6, self.joint_6_current_degrees_label, self.readout_6, 5, self.encoder_pos_6))
+
+    def home_joints(self):
+        pass
     
     def calibrate_all(self):
         # bc.calibrate_all()
         pass
+
+    def move_to_coordinates(self):
+        x_coord = int(self.x_coord_input.text())
+        y_coord = int(self.y_coord_input.text())
+        z_coord = int(self.z_coord_input.text())
+
+        ik.to_coordinate(x_coord, y_coord, z_coord)
+
+        print(ik.theta_1, ik.theta_2, ik.theta_3)
+        
+        self.x_coord_input.clear()
+        self.y_coord_input.clear()
+        self.z_coord_input.clear()
+
+        # update slider positions
+        # update readout positions
+        # automatically move the arm to the coordinate
     
     def accept_all(self):
         self.set_degrees(1, self.joint_1_current_degrees_label, 
