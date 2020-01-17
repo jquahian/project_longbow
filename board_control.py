@@ -72,7 +72,7 @@ def move_axis_by_count(motor_axis, encoder_counts):
 		odrive_1.axis0.controller.pos_setpoint = encoder_counts
 
 	if motor_axis == 2:
-		odrive_1.axis1.controller.pos_setpoint = encoder_counts
+		odrive_1.axis1.controller.pos_setpoint = -encoder_counts
 
 	if motor_axis == 3:
 		odrive_2.axis0.controller.pos_setpoint = encoder_counts
@@ -81,7 +81,7 @@ def move_axis_by_count(motor_axis, encoder_counts):
 		odrive_2.axis1.controller.pos_setpoint = encoder_counts
 
 	if motor_axis == 5:
-		odrive_3.axis0.controller.pos_setpoint = encoder_counts
+		odrive_3.axis0.controller.pos_setpoint = -encoder_counts
 
 	if motor_axis == 6:
 		odrive_3.axis1.controller.pos_setpoint = encoder_counts

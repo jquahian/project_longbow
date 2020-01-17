@@ -1,11 +1,22 @@
 import sys
 import degrees_calc as dc
 import inverse_kin as ik
-# import board_control as bc
+import board_control as bc
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import *
 
+"""
+todo:
+1. zero button to zero out the sliders for joints
+2. integer input for joint degrees
+3. way to save coordinates in a list for later use
+4. reduce the speeds of the motors!
+5. get the limit switches working
+6. get homing working
+7. get 3D visualization of robot position
+8. IK constrain IK solver properly
+"""
 
 class App(QWidget):
     def __init__(self, parent=None):
@@ -194,8 +205,7 @@ class App(QWidget):
         pass
     
     def calibrate_all(self):
-        # bc.calibrate_all()
-        pass
+        bc.calibrate_all()
 
     def move_to_coordinates(self):
         x_coord = int(self.x_coord_input.text())
@@ -244,7 +254,7 @@ class App(QWidget):
         joint_degrees_label.setText(str(readout_value.text()))
         motor_encoder_count = dc.return_counts(float(joint_degrees_label.text()), gear_ratio)
         encoder_readout.setText(str(motor_encoder_count))
-        # bc.move_axis_by_count(joint_number, motor_encoder_count)
+        bc.move_axis_by_count(joint_number, motor_encoder_count)
 
         print(f'degrees: {joint_degrees_label.text()}, \ngear ratio: {gear_ratio}, \nencoder counts: {motor_encoder_count}\n')
 
