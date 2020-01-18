@@ -39,12 +39,16 @@ class App(QWidget):
         layout = QGridLayout()
         self.setLayout(layout)
         
-        self.calibrate_btn = QPushButton("Calibrate All")
-        layout.addWidget(self.calibrate_btn, 0, 0)
+        self.connect_btn = QPushButton("Connect")
+        layout.addWidget(self.connect_btn, 0, 0)
+        self.connect_btn.clicked.connect(lambda: self.connect())
+
+        self.calibrate_btn = QPushButton("Calibrate")
+        layout.addWidget(self.calibrate_btn, 0, 1)
         self.calibrate_btn.clicked.connect(lambda: self.calibrate_all())
 
         self.home_joints_btn = QPushButton("Home")
-        layout.addWidget(self.home_joints_btn, 0, 1)
+        layout.addWidget(self.home_joints_btn, 0, 2)
         self.home_joints_btn.clicked.connect(lambda: self.home_joints())
 
         self.joint_header = QLabel("Joint \nNumber")
@@ -59,15 +63,15 @@ class App(QWidget):
         self.target_degree_header = QLabel("Target \nDegree")
         layout.addWidget(self.target_degree_header, 1, 4)
 
+        self.accept_all_btn = QPushButton("Accept All")
+        layout.addWidget(self.accept_all_btn, 10, 5)
+        self.accept_all_btn.clicked.connect(lambda: self.accept_all())
+
         self.encoder_pos_header = QLabel("Current \nEncoder \nPosition")
         layout.addWidget(self.encoder_pos_header, 1, 6)
 
         self.coordinate_header = QLabel("Coordinate \nInput")
         layout.addWidget(self.coordinate_header, 1, 7)
-
-        self.accept_all_btn = QPushButton("Accept All")
-        layout.addWidget(self.accept_all_btn, 10, 5)
-        self.accept_all_btn.clicked.connect(lambda: self.accept_all())
 
         self.move_to_coord_btn = QPushButton("To Coordinates")
         layout.addWidget(self.move_to_coord_btn, 10, 7)
@@ -101,12 +105,12 @@ class App(QWidget):
         self.joint_5_slider = self.angle_slider()
         self.joint_6_slider = self.angle_slider()
 
-        self.readout_1 = QLabel('0.0')
-        self.readout_2 = QLabel('0.0')
-        self.readout_3 = QLabel('0.0')
-        self.readout_4 = QLabel('0.0')
-        self.readout_5 = QLabel('0.0')
-        self.readout_6 = QLabel('0.0')
+        self.readout_1 = QLineEdit()
+        self.readout_2 = QLineEdit()
+        self.readout_3 = QLineEdit()
+        self.readout_4 = QLineEdit()
+        self.readout_5 = QLineEdit()
+        self.readout_6 = QLineEdit()
 
         self.accept_1 = QPushButton('Accept')
         self.accept_2 = QPushButton('Accept')
@@ -155,6 +159,7 @@ class App(QWidget):
 
         readouts = [self.readout_1, self.readout_2, self.readout_3,
                     self.readout_4, self.readout_5, self.readout_6]
+    
 
         accept_btns = [self.accept_1, self.accept_2, self.accept_3,
                        self.accept_4, self.accept_5, self.accept_6]
@@ -189,23 +194,26 @@ class App(QWidget):
             lambda: self.input_slider_value(self.joint_6_slider, self.readout_6))
 
         self.accept_1.clicked.connect(
-            lambda: self.set_degrees(1, self.joint_1_current_degrees_label, self.readout_1, 125, self.encoder_pos_1))
+            lambda: self.set_degrees(1, self.joint_1_slider, self.joint_1_current_degrees_label, self.readout_1, 125, self.encoder_pos_1))
         self.accept_2.clicked.connect(
-            lambda: self.set_degrees(2, self.joint_2_current_degrees_label, self.readout_2, 125, self.encoder_pos_2))
+            lambda: self.set_degrees(2, self.joint_2_slider, self.joint_2_current_degrees_label, self.readout_2, 125, self.encoder_pos_2))
         self.accept_3.clicked.connect(
-            lambda: self.set_degrees(3, self.joint_3_current_degrees_label, self.readout_3, 125, self.encoder_pos_3))
+            lambda: self.set_degrees(3, self.joint_3_slider, self.joint_3_current_degrees_label, self.readout_3, 125, self.encoder_pos_3))
         self.accept_4.clicked.connect(
-            lambda: self.set_degrees(4, self.joint_4_current_degrees_label, self.readout_4, 125, self.encoder_pos_4))
+            lambda: self.set_degrees(4, self.joint_4_slider, self.joint_4_current_degrees_label, self.readout_4, 125, self.encoder_pos_4))
         self.accept_5.clicked.connect(
-            lambda: self.set_degrees(5, self.joint_5_current_degrees_label, self.readout_5, 125, self.encoder_pos_5))
+            lambda: self.set_degrees(5, self.joint_5_slider, self.joint_5_current_degrees_label, self.readout_5, 125, self.encoder_pos_5))
         self.accept_6.clicked.connect(
-            lambda: self.set_degrees(6, self.joint_6_current_degrees_label, self.readout_6, 5, self.encoder_pos_6))
+            lambda: self.set_degrees(6, self.joint_6_slider, self.joint_6_current_degrees_label, self.readout_6, 5, self.encoder_pos_6))
+        
+    def connect(self):
+        bc.connect_to()
+
+    def calibrate_all(self):
+        bc.calibrate_all()
 
     def home_joints(self):
         pass
-    
-    def calibrate_all(self):
-        bc.calibrate_all()
 
     def move_to_coordinates(self):
         x_coord = int(self.x_coord_input.text())
@@ -214,6 +222,12 @@ class App(QWidget):
 
         ik.to_coordinate(x_coord, y_coord, z_coord)
 
+        """
+        these thetas correspond with only these joints:
+        theta 1: joint 2
+        theta 2: joint 3
+        theta 3: joint 5
+        """
         print(ik.theta_1, ik.theta_2, ik.theta_3)
         
         self.x_coord_input.clear()
@@ -221,6 +235,7 @@ class App(QWidget):
         self.z_coord_input.clear()
 
         # update slider positions
+
         # update readout positions
         # automatically move the arm to the coordinate
     
@@ -248,15 +263,26 @@ class App(QWidget):
 
     def input_slider_value(self, joint_slider_num, joint_readout_num):
         degree_readout = round(joint_slider_num.value()/100, 1)
-        joint_readout_num.setText(str(degree_readout))
+        joint_readout_num.setText(str(degree_readout))    
 
-    def set_degrees(self, joint_number, joint_degrees_label, readout_value, gear_ratio, encoder_readout):
-        joint_degrees_label.setText(str(readout_value.text()))
-        motor_encoder_count = dc.return_counts(float(joint_degrees_label.text()), gear_ratio)
-        encoder_readout.setText(str(motor_encoder_count))
-        bc.move_axis_by_count(joint_number, motor_encoder_count)
+    def set_degrees(self, joint_number, joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout):
+        readout_to_slider = float(readout_value.text()) * 100
 
-        print(f'degrees: {joint_degrees_label.text()}, \ngear ratio: {gear_ratio}, \nencoder counts: {motor_encoder_count}\n')
+        if readout_to_slider > 27000 or readout_to_slider < -27000:
+            error_message = QErrorMessage()
+            error_message.showMessage(f"The Value of {readout_to_slider/100} degrees is out of range.  \nValue must be between +/- 270 degrees")
+            error_message.setWindowTitle("Error: value out of range")
+            error_message.setFixedSize(700, 250)
+            error_message.exec_()
+            readout_value.setText("0")
+        else:
+            joint_degrees_label.setText(str(readout_value.text()))
+            joint_slider.setSliderPosition(readout_to_slider)
+            motor_encoder_count = dc.return_counts(float(joint_degrees_label.text()), gear_ratio)
+            encoder_readout.setText(str(motor_encoder_count))
+            # bc.move_axis_by_count(joint_number, motor_encoder_count)
+
+            print(f'degrees: {joint_degrees_label.text()}, \ngear ratio: {gear_ratio}, \nencoder counts: {motor_encoder_count}\n')
 
 def main():
     app = QApplication(sys.argv)
