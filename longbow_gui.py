@@ -8,14 +8,12 @@ from PyQt5.QtGui import *
 
 """
 todo:
-1. zero button to zero out the sliders for joints
-2. integer input for joint degrees
-3. way to save coordinates in a list for later use
-4. reduce the speeds of the motors!
-5. get the limit switches working
-6. get homing working
-7. get 3D visualization of robot position
-8. IK constrain IK solver properly
+- degree saving
+- degree loading from csv
+- limit switches
+- homing
+- 3D visualization of robot position
+- constrain IK solver properly
 """
 
 class App(QWidget):
