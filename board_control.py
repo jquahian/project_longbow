@@ -67,19 +67,19 @@ def move_axis(motor_axis, num_degrees, axis_value):
 		odrive_boards[0].axis0.controller.pos_setpoint += (num_degrees * axis_value)
 	
 	if motor_axis == 2:
-		odrive_boards[1].axis1.controller.pos_setpoint += (num_degrees * axis_value)
+		odrive_boards[0].axis1.controller.pos_setpoint += (num_degrees * axis_value)
 
 	if motor_axis == 3:
-		odrive_boards[2].axis0.controller.pos_setpoint += (num_degrees * axis_value)
+		odrive_boards[1].axis0.controller.pos_setpoint += (num_degrees * axis_value)
 
 	if motor_axis == 4:
-		odrive_boards[3].axis1.controller.pos_setpoint += (num_degrees * axis_value)
+		odrive_boards[1].axis1.controller.pos_setpoint += (num_degrees * axis_value)
 
 	if motor_axis == 5:
-		odrive_boards[4].axis0.controller.pos_setpoint += (num_degrees * axis_value)
+		odrive_boards[2].axis0.controller.pos_setpoint += (num_degrees * axis_value)
 
 	if motor_axis == 6:
-		odrive_boards[5].axis1.controller.pos_setpoint += (num_degrees * axis_value)
+		odrive_boards[2].axis1.controller.pos_setpoint += (num_degrees * axis_value)
 
 def move_axis_by_count(motor_axis, encoder_counts):
 	global odrive_boards
@@ -88,19 +88,19 @@ def move_axis_by_count(motor_axis, encoder_counts):
 		odrive_boards[0].axis0.controller.pos_setpoint = encoder_counts
 
 	if motor_axis == 2:
-		odrive_boards[1].axis1.controller.pos_setpoint = -encoder_counts
+		odrive_boards[0].axis1.controller.pos_setpoint = -encoder_counts
 
 	if motor_axis == 3:
-		odrive_boards[2].axis0.controller.pos_setpoint = encoder_counts
+		odrive_boards[1].axis0.controller.pos_setpoint = encoder_counts
 
 	if motor_axis == 4:
-		odrive_boards[3].axis1.controller.pos_setpoint = encoder_counts
+		odrive_boards[1].axis1.controller.pos_setpoint = encoder_counts
 
 	if motor_axis == 5:
-		odrive_boards[4].axis0.controller.pos_setpoint = -encoder_counts
+		odrive_boards[2].axis0.controller.pos_setpoint = -encoder_counts
 
 	if motor_axis == 6:
-		odrive_boards[5].axis1.controller.pos_setpoint = encoder_counts
-
+		odrive_boards[2].axis1.controller.pos_setpoint = encoder_counts
+	
 def home_axis():
 	print("HOMING AXIS")
