@@ -7,7 +7,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import *
 
 """
-todo:
+TODO:
 - degree saving
 - degree loading from csv
 - limit switches

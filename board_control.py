@@ -16,24 +16,21 @@ odrive_1 = 0
 odrive_2 = 0
 odrive_3 = 0
 
-odrive_boards = []
+odrive_boards = [odrive_1, odrive_2, odrive_3]
 
 def connect_to():
-	global odrive_1	
-	global odrive_2	
-	global odrive_3
-	global odrive_boards
+	# global odrive_boards
 
 	# find the odrives
-	odrive_1 = odrive.find_any(serial_number = board_1_num)
-	odrive_2 = odrive.find_any(serial_number = board_2_num)
-	odrive_3 = odrive.find_any(serial_number = board_3_num)
+	odrive_boards[0] = odrive.find_any(serial_number=board_1_num)
+	odrive_boards[1] = odrive.find_any(serial_number=board_2_num)
+	odrive_boards[2] = odrive.find_any(serial_number=board_3_num)
 
-	odrive_boards = [odrive_1, odrive_2, odrive_3]
+	# odrive_boards = [odrive_1, odrive_2, odrive_3]
 
 # calibrate odrives and set to closed loop control
 def calibrate_all():
-	global odrive_boards
+	# global odrive_boards
 	
 	print('\n\nbeginning calibration...')
 
@@ -60,7 +57,7 @@ def calibrate_all():
 	print('\n\n calibration complete')
 
 def move_axis(motor_axis, num_degrees, axis_value):
-	global odrive_boards
+	# global odrive_boards
 
 	# send commands to each joint by degrees
 	if motor_axis == 1:
@@ -82,7 +79,7 @@ def move_axis(motor_axis, num_degrees, axis_value):
 		odrive_boards[2].axis1.controller.pos_setpoint += (num_degrees * axis_value)
 
 def move_axis_by_count(motor_axis, encoder_counts):
-	global odrive_boards
+	# global odrive_boards
 
 	if motor_axis == 1:
 		odrive_boards[0].axis0.controller.pos_setpoint = encoder_counts
