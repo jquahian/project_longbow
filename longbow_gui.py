@@ -42,10 +42,12 @@ class App(QWidget):
         self.connect_btn = QPushButton("Connect")
         layout.addWidget(self.connect_btn, 0, 0)
         self.connect_btn.clicked.connect(lambda: self.connect())
+        self.is_connected = False
 
         self.calibrate_btn = QPushButton("Calibrate")
         layout.addWidget(self.calibrate_btn, 0, 1)
         self.calibrate_btn.clicked.connect(lambda: self.calibrate_all())
+        self.is_calibrated = False
 
         self.home_joints_btn = QPushButton("Home")
         layout.addWidget(self.home_joints_btn, 0, 2)
@@ -279,16 +281,28 @@ class App(QWidget):
         connect_message.setWindowTitle("Connected")
         connect_message.setText("Longbow Connected")
         connect_message.exec_()
+        
+        self.is_connected = True
 
     def calibrate_all(self):
-        bc.calibrate_all()
-        calibrate_message = QMessageBox()
-        calibrate_message.setFixedSize(400, 150)
-        calibrate_message.setIcon(QMessageBox.Information)
-        calibrate_message.setStandardButtons(QMessageBox.Ok)
-        calibrate_message.setWindowTitle("Calibrated")
-        calibrate_message.setText("Longbow Calibration Complete")
-        calibrate_message.exec_()
+        if self.is_connected:
+            bc.calibrate_all()
+            calibrate_message = QMessageBox()
+            calibrate_message.setFixedSize(400, 150)
+            calibrate_message.setIcon(QMessageBox.Information)
+            calibrate_message.setStandardButtons(QMessageBox.Ok)
+            calibrate_message.setWindowTitle("Calibrated")
+            calibrate_message.setText("Longbow Calibration Complete")
+            calibrate_message.exec_()
+            self.is_calibrated = True
+        else:
+            calibrate_message = QMessageBox()
+            calibrate_message.setFixedSize(400, 150)
+            calibrate_message.setIcon(QMessageBox.Information)
+            calibrate_message.setStandardButtons(QMessageBox.Ok)
+            calibrate_message.setWindowTitle("Longbow Connection Needed")
+            calibrate_message.setText("Connection Missing")
+            calibrate_message.exec_()
 
     def home_joints(self):
         pass
@@ -360,8 +374,10 @@ class App(QWidget):
                 bc.j5_pos.append(dc.return_counts(float(self.saved_degree_rows[i][4]), 125))
                 bc.j6_pos.append(dc.return_counts(float(self.saved_degree_rows[i][5]), 5))
 
-            # run through the coordinates            
-            # bc.move_to_saved_pos(0)
+            # run through the coordinates
+            
+            if self.is_calibrated:       
+                bc.move_to_saved_pos(0)
 
         # popup saying completed run or loop though from the start
         run_complete_message = QMessageBox()
@@ -451,7 +467,8 @@ class App(QWidget):
                 float(joint_degrees_label.text()), gear_ratio)
             encoder_readout.setText(str(motor_encoder_count))
 
-            # bc.move_axis_by_count(joint_number, motor_encoder_count)
+            if self.is_calibrated:
+                bc.move_axis_by_count(joint_number, motor_encoder_count)
 
 def main():
     app = QApplication(sys.argv)
