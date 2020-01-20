@@ -47,7 +47,7 @@ class App(QWidget):
         self.calibrate_btn = QPushButton("Calibrate")
         layout.addWidget(self.calibrate_btn, 0, 1)
         self.calibrate_btn.clicked.connect(lambda: self.calibrate_all())
-        self.is_calibrated = False
+        self.is_calibrated = True
 
         self.home_joints_btn = QPushButton("Home")
         layout.addWidget(self.home_joints_btn, 0, 2)
@@ -74,7 +74,7 @@ class App(QWidget):
         self.degrees_list_loop = QLineEdit()
         layout.addWidget(self.degrees_list_loop, 0, 7)
         self.degrees_list_loop.setValidator(QIntValidator())
-        self.degrees_list_loop.setText('0')
+        self.degrees_list_loop.setText('1')
         
         self.degrees_run = QPushButton("Run Saved Degrees")
         layout.addWidget(self.degrees_run, 0, 8)
@@ -354,7 +354,7 @@ class App(QWidget):
 
     # runs through all the coordinates in a given CSV file
     def run_saved_degrees(self):
-        loop_num =  int(self.degrees_list_loop.text()) + 1
+        loop_num =  int(self.degrees_list_loop.text())        
 
         # clear any previously saved degrees
         bc.j1_pos = []

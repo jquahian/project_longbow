@@ -109,10 +109,10 @@ def move_axis_by_count(motor_axis, encoder_counts):
 def move_to_saved_pos(pos_index):
     if pos_index < len(j1_pos):
         odrive_boards[0].axis0.controller.pos_setpoint = j1_pos[pos_index]
-        odrive_boards[0].axis1.controller.pos_setpoint = j2_pos[pos_index]
+        odrive_boards[0].axis1.controller.pos_setpoint = -j2_pos[pos_index]
         odrive_boards[1].axis0.controller.pos_setpoint = j3_pos[pos_index] 
         odrive_boards[1].axis1.controller.pos_setpoint = j4_pos[pos_index] 
-        odrive_boards[2].axis0.controller.pos_setpoint = j5_pos[pos_index] 
+        odrive_boards[2].axis0.controller.pos_setpoint = -j5_pos[pos_index] 
         odrive_boards[2].axis1.controller.pos_setpoint = j6_pos[pos_index]
         time.sleep(0.1)
         
