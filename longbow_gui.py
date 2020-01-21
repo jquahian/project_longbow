@@ -31,8 +31,8 @@ class App(QWidget):
         self.longbow_UI()
 
     def longbow_UI(self):
-        self.is_calibrated = True
         self.is_connected = False
+        self.is_calibrated = True
         
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
@@ -299,6 +299,7 @@ class App(QWidget):
             calibrate_message.setWindowTitle("Calibrated")
             calibrate_message.setText("Longbow Calibration Complete")
             calibrate_message.exec_()
+            
             self.is_calibrated = True
         else:
             calibrate_message = QMessageBox()
@@ -327,9 +328,7 @@ class App(QWidget):
             if files not in self.list_items:
                 if files[-3:] == 'csv' or files[-3:] == '.py':
                     dropdown_to_update.addItem(files)
-        
-        print(self.list_items)
-
+                    
     def degrees_loader(self, dir, list_selection):
         # clear loading a new file
         self.saved_degree_rows = []
@@ -349,8 +348,6 @@ class App(QWidget):
             self.readout_5.setText(str(self.saved_degree_rows[0][4]))
             self.readout_6.setText(str(self.saved_degree_rows[0][5]))
             
-            print(len(self.saved_degree_rows))
-
     # runs through all the coordinates in a given CSV file
     def run_saved_degrees(self):
         loop_num =  int(self.degrees_list_loop.text())        
@@ -466,7 +463,7 @@ class App(QWidget):
                 float(joint_degrees_label.text()), gear_ratio)
             encoder_readout.setText(str(motor_encoder_count))
 
-            if self.is_calibrated:
+            if self.is_connected and self.is_calibrated:
                 bc.move_axis_by_count(joint_number, motor_encoder_count)
 
 def main():
