@@ -267,7 +267,7 @@ class App(QWidget):
         self.accept_4.clicked.connect(
             lambda: self.set_degrees(4, self.joint_4_slider, self.joint_4_current_degrees_label, self.readout_4, 125, self.encoder_pos_4, False))
         self.accept_5.clicked.connect(
-            lambda: self.set_degrees(5, self.joint_5_slider, self.joint_5_current_degrees_label, self.readout_5, 125, self.encoder_pos_5, False))
+            lambda: self.set_degrees(5, self.joint_5_slider, self.joint_5_current_degrees_label, self.r
         self.accept_6.clicked.connect(
             lambda: self.set_degrees(6, self.joint_6_slider, self.joint_6_current_degrees_label, self.readout_6, 5, self.encoder_pos_6, False))
 
