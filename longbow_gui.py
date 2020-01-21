@@ -10,13 +10,11 @@ from PyQt5.QtGui import *
 
 """
 TODO:
-- degree saving
 - limit switches
 - homing
 - 3D visualization of robot position
 - constrain IK solver properly
 """
-
 
 class App(QWidget):
     def __init__(self, parent=None):
@@ -33,6 +31,9 @@ class App(QWidget):
         self.longbow_UI()
 
     def longbow_UI(self):
+        self.is_calibrated = True
+        self.is_connected = False
+        
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
@@ -42,12 +43,10 @@ class App(QWidget):
         self.connect_btn = QPushButton("Connect")
         layout.addWidget(self.connect_btn, 0, 0)
         self.connect_btn.clicked.connect(lambda: self.connect())
-        self.is_connected = False
 
         self.calibrate_btn = QPushButton("Calibrate")
         layout.addWidget(self.calibrate_btn, 0, 1)
         self.calibrate_btn.clicked.connect(lambda: self.calibrate_all())
-        self.is_calibrated = True
 
         self.home_joints_btn = QPushButton("Home")
         layout.addWidget(self.home_joints_btn, 0, 2)
@@ -272,6 +271,12 @@ class App(QWidget):
         self.accept_6.clicked.connect(
             lambda: self.set_degrees(6, self.joint_6_slider, self.joint_6_current_degrees_label, self.readout_6, 5, self.encoder_pos_6, False))
 
+    # will keep track of dropdowbn contents
+    list_items = []
+
+    # global coordinate storage for other coord loading functions
+    saved_degree_rows = []
+    
     def connect(self):
         bc.connect_to()
         connect_message = QMessageBox()
@@ -307,9 +312,6 @@ class App(QWidget):
     def home_joints(self):
         pass
     
-    # will keep track of dropdowbn contents
-    list_items = []
-    
     def refresh_dropdown_list(self, btn_to_update, dropdown_to_update, dir_path):
         file_list = os.listdir(dir_path)
         
@@ -328,9 +330,6 @@ class App(QWidget):
         
         print(self.list_items)
 
-    # global coordinate storage for other coord loading functions
-    saved_degree_rows = []
-    
     def degrees_loader(self, dir, list_selection):
         # clear loading a new file
         self.saved_degree_rows = []
@@ -475,7 +474,6 @@ def main():
     ex = App()
     ex.show()
     sys.exit(app.exec_())
-
 
 if __name__ == "__main__":
     main()

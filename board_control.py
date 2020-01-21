@@ -123,6 +123,8 @@ def move_to_saved_pos(pos_index):
                 odrive_boards[2].axis0.encoder.vel_estimate != 0 or\
         		odrive_boards[2].axis1.encoder.vel_estimate != 0:
             time.sleep(0.1)
+            
+            print(odrive_boards[0].axis0.encoder.vel_estimate)
         else:
             move_to_saved_pos(pos_index + 1)  
     else:
