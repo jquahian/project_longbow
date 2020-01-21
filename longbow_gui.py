@@ -10,6 +10,7 @@ from PyQt5.QtGui import *
 
 """
 TODO:
+- begin splitting app into multiple windows
 - limit switches
 - homing
 - 3D visualization of robot position
@@ -39,7 +40,11 @@ class App(QWidget):
 
         layout = QGridLayout()
         self.setLayout(layout)
-
+        
+        for i in range(30):
+            layout.setColumnStretch(i, 1)
+            layout.setRowStretch(i, 1)
+        
         self.connect_btn = QPushButton("Connect")
         layout.addWidget(self.connect_btn, 0, 0)
         self.connect_btn.clicked.connect(lambda: self.connect())
@@ -140,6 +145,7 @@ class App(QWidget):
         self.joint_4_slider = self.angle_slider()
         self.joint_5_slider = self.angle_slider()
         self.joint_6_slider = self.angle_slider()
+        layout.setColumnMinimumWidth(3, 500)
 
         self.readout_1 = QLineEdit()
         self.readout_1.setText("0.0")
@@ -189,6 +195,16 @@ class App(QWidget):
         self.z_coord_input = QLineEdit()
         self.z_coord_input.setValidator(QIntValidator())
         self.z_coord_input.setMaxLength(4)
+        
+        # self.input_table_header = QLabel('Input Table')
+        # layout.addWidget(self.input_table_header, 11, 3)
+        
+        # self.input_table = QTableWidget()
+        # self.input_table.setRowCount(10)
+        # self.input_table.setColumnCount(6)
+        # layout.setColumnMinimumWidth(3, 700)
+        # layout.setRowMinimumHeight(12, 400)
+        # layout.addWidget(self.input_table, 12, 3) 
 
         joint_headers = [self.joint_1_header, self.joint_2_header, self.joint_3_header,
                          self.joint_4_header, self.joint_5_header, self.joint_6_header]
