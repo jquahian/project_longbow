@@ -195,16 +195,6 @@ class App(QWidget):
         self.z_coord_input = QLineEdit()
         self.z_coord_input.setValidator(QIntValidator())
         self.z_coord_input.setMaxLength(4)
-        
-        # self.input_table_header = QLabel('Input Table')
-        # layout.addWidget(self.input_table_header, 11, 3)
-        
-        # self.input_table = QTableWidget()
-        # self.input_table.setRowCount(10)
-        # self.input_table.setColumnCount(6)
-        # layout.setColumnMinimumWidth(3, 700)
-        # layout.setRowMinimumHeight(12, 400)
-        # layout.addWidget(self.input_table, 12, 3) 
 
         joint_headers = [self.joint_1_header, self.joint_2_header, self.joint_3_header,
                          self.joint_4_header, self.joint_5_header, self.joint_6_header]
