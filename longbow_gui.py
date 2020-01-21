@@ -363,18 +363,18 @@ class App(QWidget):
         bc.j5_pos = []
         bc.j6_pos = []
         
-        for i in range(loop_num):      
+        for i in range(len(self.saved_degree_rows)):
             # add the degrees, as encoder counts, to the position list in board control
-            for i in range(len(self.saved_degree_rows)):
-                bc.j1_pos.append(dc.return_counts(float(self.saved_degree_rows[i][0]), 125))
-                bc.j2_pos.append(dc.return_counts(float(self.saved_degree_rows[i][1]), 125))
-                bc.j3_pos.append(dc.return_counts(float(self.saved_degree_rows[i][2]), 125))
-                bc.j4_pos.append(dc.return_counts(float(self.saved_degree_rows[i][3]), 125))
-                bc.j5_pos.append(dc.return_counts(float(self.saved_degree_rows[i][4]), 125))
-                bc.j6_pos.append(dc.return_counts(float(self.saved_degree_rows[i][5]), 5))
-
+            bc.j1_pos.append(dc.return_counts(float(self.saved_degree_rows[i][0]), 125))
+            bc.j2_pos.append(dc.return_counts(float(self.saved_degree_rows[i][1]), 125))
+            bc.j3_pos.append(dc.return_counts(float(self.saved_degree_rows[i][2]), 125))
+            bc.j4_pos.append(dc.return_counts(float(self.saved_degree_rows[i][3]), 125))
+            bc.j5_pos.append(dc.return_counts(float(self.saved_degree_rows[i][4]), 125))
+            bc.j6_pos.append(dc.return_counts(float(self.saved_degree_rows[i][5]), 5))
+       
+        for i in range(loop_num):      
+            print(f'loop number: {i}')
             # run through the coordinates
-            
             if self.is_calibrated:       
                 bc.move_to_saved_pos(0)
 

@@ -107,28 +107,27 @@ def move_axis_by_count(motor_axis, encoder_counts):
 		odrive_boards[2].axis1.controller.pos_setpoint = encoder_counts
 
 def move_to_saved_pos(pos_index):
-    if pos_index < len(j1_pos):
-        odrive_boards[0].axis0.controller.pos_setpoint = j1_pos[pos_index]
-        odrive_boards[0].axis1.controller.pos_setpoint = -j2_pos[pos_index]
-        odrive_boards[1].axis0.controller.pos_setpoint = j3_pos[pos_index] 
-        odrive_boards[1].axis1.controller.pos_setpoint = j4_pos[pos_index] 
-        odrive_boards[2].axis0.controller.pos_setpoint = -j5_pos[pos_index] 
-        odrive_boards[2].axis1.controller.pos_setpoint = j6_pos[pos_index]
-        time.sleep(0.1)
-        
-        while odrive_boards[0].axis0.encoder.vel_estimate !=0 or\
-            	odrive_boards[0].axis1.encoder.vel_estimate != 0 or\
-                odrive_boards[1].axis0.encoder.vel_estimate != 0 or\
-            	odrive_boards[1].axis1.encoder.vel_estimate != 0 or\
-                odrive_boards[2].axis0.encoder.vel_estimate != 0 or\
-        		odrive_boards[2].axis1.encoder.vel_estimate != 0:
-            time.sleep(0.1)
-            
-            print(odrive_boards[0].axis0.encoder.vel_estimate)
-        else:
-            move_to_saved_pos(pos_index + 1)  
-    else:
-        print('final point reached')
+	if pos_index < len(j1_pos):
+		odrive_boards[0].axis0.controller.pos_setpoint = j1_pos[pos_index]
+		odrive_boards[0].axis1.controller.pos_setpoint = -j2_pos[pos_index]
+		odrive_boards[1].axis0.controller.pos_setpoint = j3_pos[pos_index] 
+		odrive_boards[1].axis1.controller.pos_setpoint = j4_pos[pos_index] 
+		odrive_boards[2].axis0.controller.pos_setpoint = -j5_pos[pos_index] 
+		odrive_boards[2].axis1.controller.pos_setpoint = j6_pos[pos_index]
+		time.sleep(0.1)
+
+		# need to take a look at a better way to tell if it's at the correct point...
+		while abs(odrive_boards[0].axis0.encoder.vel_estimate) >= 300 or\
+				abs(odrive_boards[0].axis1.encoder.vel_estimate) >= 300 or\
+				abs(odrive_boards[1].axis0.encoder.vel_estimate) >= 300 or\
+				abs(odrive_boards[1].axis1.encoder.vel_estimate) >= 300 or\
+				abs(odrive_boards[2].axis0.encoder.vel_estimate) >= 300 or\
+				abs(odrive_boards[2].axis1.encoder.vel_estimate) >= 300:
+			time.sleep(0.1)
+		else:
+			move_to_saved_pos(pos_index + 1)  
+	else:
+		print('final point reached')
 	
 def home_axis():
 	print('homing all joints')
