@@ -28,7 +28,29 @@ j6_pos = []
 
 odrive_boards = [odrive_1, odrive_2, odrive_3]
 
+joint_1_max = 180
+joint_1_rest_pos = 0
+joint_1_home_pos = 0
+
+joint_2_max = 110
+joint_2_rest_pos = 30
 joint_2_home_pos = 0
+
+joint_3_max = 120
+joint_3_rest_pos = 0
+joint_3_home_pos = 0
+
+joint_4_max = 180
+joint_4_rest_pos = 0
+joint_4_home_pos = 0
+
+joint_5_max = 90
+joint_5_rest_pos = 0
+joint_5_home_pos = 0
+
+joint_6_max = 360
+joint_6_rest_pos = 0
+joint_6_home_pos = 0
 
 def connect_to():
 	# global odrive_boards
@@ -92,23 +114,22 @@ def move_axis_by_count(motor_axis, encoder_counts):
 	global joint_2_home_pos
 
 	if motor_axis == 1:
-		odrive_boards[0].axis0.controller.pos_setpoint = encoder_counts
+		odrive_boards[0].axis0.controller.pos_setpoint = (joint_1_home_pos + encoder_counts)
 
 	if motor_axis == 2:
 		odrive_boards[0].axis1.controller.pos_setpoint = (joint_2_home_pos - encoder_counts)
-		print(joint_2_home_pos)
 
 	if motor_axis == 3:
-		odrive_boards[1].axis0.controller.pos_setpoint = encoder_counts
+		odrive_boards[1].axis0.controller.pos_setpoint = (joint_3_home_pos + encoder_counts)
 
 	if motor_axis == 4:
-		odrive_boards[1].axis1.controller.pos_setpoint = encoder_counts
+		odrive_boards[1].axis1.controller.pos_setpoint = (joint_4_home_pos + encoder_counts)
 
 	if motor_axis == 5:
-		odrive_boards[2].axis0.controller.pos_setpoint = -encoder_counts
+		odrive_boards[2].axis0.controller.pos_setpoint = -(joint_5_home_pos - encoder_counts)
 
 	if motor_axis == 6:
-		odrive_boards[2].axis1.controller.pos_setpoint = encoder_counts
+		odrive_boards[2].axis1.controller.pos_setpoint = (joint_6_home_pos + encoder_counts)
 
 def move_to_saved_pos(pos_index):
 	if pos_index < len(j1_pos):
@@ -134,6 +155,7 @@ def move_to_saved_pos(pos_index):
 		print('final point reached')
 	
 def home_axis():
+	global joint_2_rest_pos
 	global joint_2_home_pos
 
 	print('homing all joints')
@@ -144,16 +166,14 @@ def home_axis():
 
 	arduino_board.digital[7].mode = pyfirmata.INPUT
 
-	# move_axis_by_count(5, dc.return_counts(-100, 125))
-
 	buffer_counter = 0
 
 	while True:
 		joint_2_limit = arduino_board.digital[7].read()
 
+		# move in 2 degree incriments until we hit the limit switch
 		if joint_2_limit is True:
 			move_axis(2, dc.return_counts(2.0, 125), 1)
-			print(odrive_boards[0].axis1.controller.pos_setpoint)
 		else:
 			buffer_counter += 1
 			if buffer_counter >= 2:
@@ -167,6 +187,6 @@ def home_axis():
 	# provide a + 10 degree offset for the 'zero' or minimum position of the joint
 	joint_2_home_pos = odrive_boards[0].axis1.controller.pos_setpoint - dc.return_counts(10, 125)
 	
-	move_axis_by_count(2, dc.return_counts(20.0, 125))
+	move_axis_by_count(2, dc.return_counts(joint_2_rest_pos, 125))
 
 	print(joint_2_home_pos)	

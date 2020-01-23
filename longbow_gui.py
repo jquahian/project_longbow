@@ -141,6 +141,8 @@ class App(QWidget):
 
         self.joint_1_slider = self.angle_slider()
         self.joint_2_slider = self.angle_slider()
+        self.joint_2_slider.setMaximum(11500)
+
         self.joint_3_slider = self.angle_slider()
         self.joint_4_slider = self.angle_slider()
         self.joint_5_slider = self.angle_slider()
@@ -319,7 +321,8 @@ class App(QWidget):
     def home_joints(self):
         if self.is_connected and self.is_calibrated:
             bc.home_axis()
-    
+            self.joint_2_current_degrees_label.setText(str(bc.joint_2_rest_pos))
+
     def refresh_dropdown_list(self, btn_to_update, dropdown_to_update, dir_path):
         file_list = os.listdir(dir_path)
         
@@ -440,8 +443,6 @@ class App(QWidget):
 
     def angle_slider(self):
         self.joint_degree_slider = QSlider(Qt.Horizontal)
-        self.joint_degree_slider.setMinimum(-27000)
-        self.joint_degree_slider.setMaximum(27000)
         self.joint_degree_slider.setValue(0)
 
         return self.joint_degree_slider
