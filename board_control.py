@@ -28,7 +28,7 @@ j6_pos = []
 
 odrive_boards = [odrive_1, odrive_2, odrive_3]
 
-joint_6_offset = 0
+joint_2_home_pos = 0
 
 def connect_to():
 	# global odrive_boards
@@ -69,8 +69,6 @@ def calibrate_all():
 	print('\n\n calibration complete')
 
 def move_axis(motor_axis, num_degrees, axis_value):
-	# global odrive_boards
-
 	# send commands to each joint by degrees
 	if motor_axis == 1:
 		odrive_boards[0].axis0.controller.pos_setpoint += (num_degrees * axis_value)
@@ -91,13 +89,14 @@ def move_axis(motor_axis, num_degrees, axis_value):
 		odrive_boards[2].axis1.controller.pos_setpoint += (num_degrees * axis_value)
 
 def move_axis_by_count(motor_axis, encoder_counts):
-	# global odrive_boards
+	global joint_2_home_pos
 
 	if motor_axis == 1:
 		odrive_boards[0].axis0.controller.pos_setpoint = encoder_counts
 
 	if motor_axis == 2:
-		odrive_boards[0].axis1.controller.pos_setpoint = -encoder_counts
+		odrive_boards[0].axis1.controller.pos_setpoint = (joint_2_home_pos - encoder_counts)
+		print(joint_2_home_pos)
 
 	if motor_axis == 3:
 		odrive_boards[1].axis0.controller.pos_setpoint = encoder_counts
@@ -135,23 +134,26 @@ def move_to_saved_pos(pos_index):
 		print('final point reached')
 	
 def home_axis():
+	global joint_2_home_pos
+
 	print('homing all joints')
 	arduino_board = pyfirmata.Arduino('/dev/ttyACM0')
 	
 	it = pyfirmata.util.Iterator(arduino_board)
 	it.start()
 
-	arduino_board.digital[2].mode = pyfirmata.INPUT
+	arduino_board.digital[7].mode = pyfirmata.INPUT
 
-	move_axis_by_count(6, dc.return_counts(-720, 5))
+	# move_axis_by_count(5, dc.return_counts(-100, 125))
 
 	buffer_counter = 0
 
 	while True:
-		sw = arduino_board.digital[2].read()
+		joint_2_limit = arduino_board.digital[7].read()
 
-		if sw is True:
-			print("now homing...")
+		if joint_2_limit is True:
+			move_axis(2, dc.return_counts(2.0, 125), 1)
+			print(odrive_boards[0].axis1.controller.pos_setpoint)
 		else:
 			buffer_counter += 1
 			if buffer_counter >= 2:
@@ -162,13 +164,9 @@ def home_axis():
 	
 	print("limit reached")
 
-	# reset encoder to zero
-	print(f'joint 6 encoder count at limit: {odrive_boards[2].axis1.controller.pos_setpoint}')
-	odrive_boards[2].axis1.encoder.set_linear_count(0)
-	print(f'joint 6 encoder count reset: {odrive_boards[2].axis1.controller.pos_setpoint}')
+	# provide a + 10 degree offset for the 'zero' or minimum position of the joint
+	joint_2_home_pos = odrive_boards[0].axis1.controller.pos_setpoint - dc.return_counts(10, 125)
+	
+	move_axis_by_count(2, dc.return_counts(20.0, 125))
 
-	# move to 90 degrees as the home position relative to the limit switch
-	move_axis_by_count(6, dc.return_counts(90, 5))
-	degree_regurn = dc.return_degrees(odrive_boards[2].axis1.controller.pos_setpoint, 5)
-	print(f'joint 6 final degree position: {degree_regurn}')
-	print('homed')
+	print(joint_2_home_pos)	
