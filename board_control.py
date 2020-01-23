@@ -1,7 +1,10 @@
 import odrive
 import time
 import serial
+import pyfirmata
+import degrees_calc as dc
 from odrive.enums import *
+
 
 # board with axis 1, 2
 board_1_num = '20873592524B'
@@ -24,6 +27,8 @@ j5_pos = []
 j6_pos = []
 
 odrive_boards = [odrive_1, odrive_2, odrive_3]
+
+joint_6_offset = 0
 
 def connect_to():
 	# global odrive_boards
@@ -131,3 +136,39 @@ def move_to_saved_pos(pos_index):
 	
 def home_axis():
 	print('homing all joints')
+	arduino_board = pyfirmata.Arduino('/dev/ttyACM0')
+	
+	it = pyfirmata.util.Iterator(arduino_board)
+	it.start()
+
+	arduino_board.digital[2].mode = pyfirmata.INPUT
+
+	move_axis_by_count(6, dc.return_counts(-720, 5))
+
+	buffer_counter = 0
+
+	while True:
+		sw = arduino_board.digital[2].read()
+
+		if sw is True:
+			print("now homing...")
+		else:
+			buffer_counter += 1
+			if buffer_counter >= 2:
+				buffer_counter = 0
+				break
+		
+		time.sleep(0.1)
+	
+	print("limit reached")
+
+	# reset encoder to zero
+	print(f'joint 6 encoder count at limit: {odrive_boards[2].axis1.controller.pos_setpoint}')
+	odrive_boards[2].axis1.encoder.set_linear_count(0)
+	print(f'joint 6 encoder count reset: {odrive_boards[2].axis1.controller.pos_setpoint}')
+
+	# move to 90 degrees as the home position relative to the limit switch
+	move_axis_by_count(6, dc.return_counts(90, 5))
+	degree_regurn = dc.return_degrees(odrive_boards[2].axis1.controller.pos_setpoint, 5)
+	print(f'joint 6 final degree position: {degree_regurn}')
+	print('homed')

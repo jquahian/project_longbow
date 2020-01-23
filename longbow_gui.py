@@ -317,7 +317,8 @@ class App(QWidget):
             calibrate_message.exec_()
 
     def home_joints(self):
-        pass
+        if self.is_connected and self.is_calibrated:
+            bc.home_axis()
     
     def refresh_dropdown_list(self, btn_to_update, dropdown_to_update, dir_path):
         file_list = os.listdir(dir_path)
