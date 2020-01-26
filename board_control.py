@@ -35,6 +35,7 @@ joint_1_home_pos = 0
 joint_2_max = 110
 joint_2_rest_pos = 30
 joint_2_home_pos = 0
+joint_2_calibration = [joint_2_home_pos, joint_2_max, joint_2_rest_pos]
 
 joint_3_max = 120
 joint_3_rest_pos = 0
@@ -90,7 +91,7 @@ def calibrate_all():
 
 	print('\n\n calibration complete')
 
-def move_axis(motor_axis, num_degrees, axis_value):
+def move_axis_incremental(motor_axis, num_degrees, axis_value):
 	# send commands to each joint by degrees
 	if motor_axis == 1:
 		odrive_boards[0].axis0.controller.pos_setpoint += (num_degrees * axis_value)
@@ -110,14 +111,13 @@ def move_axis(motor_axis, num_degrees, axis_value):
 	if motor_axis == 6:
 		odrive_boards[2].axis1.controller.pos_setpoint += (num_degrees * axis_value)
 
-def move_axis_by_count(motor_axis, encoder_counts):
-	global joint_2_home_pos
+def move_axis_absolute(motor_axis, encoder_counts):
 
 	if motor_axis == 1:
 		odrive_boards[0].axis0.controller.pos_setpoint = (joint_1_home_pos + encoder_counts)
 
 	if motor_axis == 2:
-		odrive_boards[0].axis1.controller.pos_setpoint = (joint_2_home_pos - encoder_counts)
+		odrive_boards[0].axis1.controller.pos_setpoint = (joint_2_calibration[0] - encoder_counts)
 
 	if motor_axis == 3:
 		odrive_boards[1].axis0.controller.pos_setpoint = (joint_3_home_pos + encoder_counts)
@@ -133,12 +133,20 @@ def move_axis_by_count(motor_axis, encoder_counts):
 
 def move_to_saved_pos(pos_index):
 	if pos_index < len(j1_pos):
-		odrive_boards[0].axis0.controller.pos_setpoint = j1_pos[pos_index]
-		odrive_boards[0].axis1.controller.pos_setpoint = -j2_pos[pos_index]
-		odrive_boards[1].axis0.controller.pos_setpoint = j3_pos[pos_index] 
-		odrive_boards[1].axis1.controller.pos_setpoint = j4_pos[pos_index] 
-		odrive_boards[2].axis0.controller.pos_setpoint = -j5_pos[pos_index] 
-		odrive_boards[2].axis1.controller.pos_setpoint = j6_pos[pos_index]
+		move_axis_absolute(1, j1_pos[pos_index])
+		move_axis_absolute(2, j2_pos[pos_index])
+		move_axis_absolute(3, j3_pos[pos_index])
+		move_axis_absolute(4, j4_pos[pos_index])
+		move_axis_absolute(5, j5_pos[pos_index])
+		move_axis_absolute(6, j6_pos[pos_index])
+
+		# odrive_boards[0].axis0.controller.pos_setpoint = j1_pos[pos_index]
+		# odrive_boards[0].axis1.controller.pos_setpoint = -j2_pos[pos_index]
+		# odrive_boards[1].axis0.controller.pos_setpoint = j3_pos[pos_index] 
+		# odrive_boards[1].axis1.controller.pos_setpoint = j4_pos[pos_index] 
+		# odrive_boards[2].axis0.controller.pos_setpoint = -j5_pos[pos_index] 
+		# odrive_boards[2].axis1.controller.pos_setpoint = j6_pos[pos_index]
+
 		time.sleep(0.1)
 
 		# need to take a look at a better way to tell if it's at the correct point...
@@ -155,8 +163,6 @@ def move_to_saved_pos(pos_index):
 		print('final point reached')
 	
 def home_axis():
-	global joint_2_rest_pos
-	global joint_2_home_pos
 
 	print('homing all joints')
 	arduino_board = pyfirmata.Arduino('/dev/ttyACM0')
@@ -164,8 +170,10 @@ def home_axis():
 	it = pyfirmata.util.Iterator(arduino_board)
 	it.start()
 
-	arduino_board.digital[7].mode = pyfirmata.INPUT
+	arduino_board.digital[7].ormode = pyfirmata.INPUT
 
+	# temporary solution to not having access to the arduino's PULLUP resistor.
+	# need a hardware resistsor in the circuit...
 	buffer_counter = 0
 
 	while True:
@@ -173,7 +181,7 @@ def home_axis():
 
 		# move in 2 degree incriments until we hit the limit switch
 		if joint_2_limit is True:
-			move_axis(2, dc.return_counts(2.0, 125), 1)
+			move_axis_incremental(2, dc.return_counts(2.0, 125), 1)
 		else:
 			buffer_counter += 1
 			if buffer_counter >= 2:
@@ -184,9 +192,9 @@ def home_axis():
 	
 	print("limit reached")
 
-	# provide a + 10 degree offset for the 'zero' or minimum position of the joint
-	joint_2_home_pos = odrive_boards[0].axis1.controller.pos_setpoint - dc.return_counts(10, 125)
+	# provide a + 5 degree offset for the 'zero' or minimum position of the joint
+	joint_2_calibration[0] = odrive_boards[0].axis1.controller.pos_setpoint - dc.return_counts(5, 125)
 	
-	move_axis_by_count(2, dc.return_counts(joint_2_rest_pos, 125))
+	move_axis_absolute(2, dc.return_counts(joint_2_calibration[2], 125))
 
 	print(joint_2_home_pos)	

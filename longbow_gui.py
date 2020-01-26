@@ -472,7 +472,7 @@ class App(QWidget):
             encoder_readout.setText(str(motor_encoder_count))
 
             if self.is_connected and self.is_calibrated:
-                bc.move_axis_by_count(joint_number, motor_encoder_count)
+                bc.move_axis_absolute(joint_number, motor_encoder_count)
 
 def main():
     app = QApplication(sys.argv)
