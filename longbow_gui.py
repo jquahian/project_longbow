@@ -11,8 +11,6 @@ from PyQt5.QtGui import *
 """
 TODO:
 - begin splitting app into multiple windows
-- limit switches
-- homing
 - 3D visualization of robot position
 - constrain IK solver properly
 """
