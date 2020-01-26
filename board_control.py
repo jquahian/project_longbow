@@ -50,8 +50,9 @@ joint_5_rest_pos = 0
 joint_5_home_pos = 0
 
 joint_6_max = 360
-joint_6_rest_pos = 0
+joint_6_rest_pos = 90
 joint_6_home_pos = 0
+joint_6_calibration = [joint_6_home_pos, joint_6_max, joint_6_rest_pos]
 
 def connect_to():
 	# global odrive_boards
@@ -129,7 +130,7 @@ def move_axis_absolute(motor_axis, encoder_counts):
 		odrive_boards[2].axis0.controller.pos_setpoint = -(joint_5_home_pos - encoder_counts)
 
 	if motor_axis == 6:
-		odrive_boards[2].axis1.controller.pos_setpoint = (joint_6_home_pos + encoder_counts)
+		odrive_boards[2].axis1.controller.pos_setpoint = (joint_6_calibration[0] + encoder_counts)
 
 def move_to_saved_pos(pos_index):
 	if pos_index < len(j1_pos):
@@ -162,26 +163,26 @@ def move_to_saved_pos(pos_index):
 	else:
 		print('final point reached')
 	
-def home_axis():
+def home_axis(pin_num, joint_num, gear_reduction, joint_calibration_array, direction_modifier):
 
-	print('homing all joints')
+	print(f'homing joint {joint_num} on pin {pin_num}.')
 	arduino_board = pyfirmata.Arduino('/dev/ttyACM0')
 	
 	it = pyfirmata.util.Iterator(arduino_board)
 	it.start()
 
-	arduino_board.digital[7].ormode = pyfirmata.INPUT
+	arduino_board.digital[pin_num].mode = pyfirmata.INPUT
 
 	# temporary solution to not having access to the arduino's PULLUP resistor.
 	# need a hardware resistsor in the circuit...
 	buffer_counter = 0
 
 	while True:
-		joint_2_limit = arduino_board.digital[7].read()
+		joint_limit_status = arduino_board.digital[pin_num].read()
 
 		# move in 2 degree incriments until we hit the limit switch
-		if joint_2_limit is True:
-			move_axis_incremental(2, dc.return_counts(2.0, 125), 1)
+		if joint_limit_status is True:
+			move_axis_incremental(joint_num, dc.return_counts(2.0, gear_reduction), 1)
 		else:
 			buffer_counter += 1
 			if buffer_counter >= 2:
@@ -192,9 +193,25 @@ def home_axis():
 	
 	print("limit reached")
 
-	# provide a + 5 degree offset for the 'zero' or minimum position of the joint
-	joint_2_calibration[0] = odrive_boards[0].axis1.controller.pos_setpoint - dc.return_counts(5, 125)
-	
-	move_axis_absolute(2, dc.return_counts(joint_2_calibration[2], 125))
+	if joint_num == 1:
+		joint_zero = odrive_boards[0].axis0.controller.pos_setpoint
+	elif joint_num == 2:
+		joint_zero = odrive_boards[0].axis1.controller.pos_setpoint
+	elif joint_num == 3:
+		joint_zero = odrive_boards[1].axis0.controller.pos_setpoint
+	elif joint_num == 4:
+		joint_zero = odrive_boards[1].axis1.controller.pos_setpoint
+	elif joint_num == 5:
+		joint_zero = odrive_boards[2].axis0.controller.pos_setpoint
+	elif joint_num == 6:
+		joint_zero = odrive_boards[2].axis1.controller.pos_setpoint
+	else:
+		print('invalid joint')
 
-	print(joint_2_home_pos)	
+	# provide a + 5 degree offset for the 'zero' or minimum position of the joint
+	joint_calibration_array[0] = joint_zero + (direction_modifier * dc.return_counts(5, gear_reduction))
+
+	# move the joint to the rest position some degrees off the limit switch
+	move_axis_absolute(joint_num, dc.return_counts(joint_calibration_array[2], gear_reduction))
+
+

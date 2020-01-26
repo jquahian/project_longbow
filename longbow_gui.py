@@ -55,7 +55,7 @@ class App(QWidget):
 
         self.home_joints_btn = QPushButton("Home")
         layout.addWidget(self.home_joints_btn, 0, 2)
-        self.home_joints_btn.clicked.connect(lambda: self.home_joints())
+        self.home_joints_btn.clicked.connect(lambda: self.home_joints(joint_to_home = 2))
 
         self.app_list = QComboBox()
         layout.addWidget(self.app_list, 0, 3)
@@ -318,10 +318,17 @@ class App(QWidget):
             calibrate_message.setText("Connection Missing")
             calibrate_message.exec_()
 
-    def home_joints(self):
+    def home_joints(self, joint_to_home):
         if self.is_connected and self.is_calibrated:
-            bc.home_axis()
-            self.joint_2_current_degrees_label.setText(str(bc.joint_2_rest_pos))
+
+            if joint_to_home == 2:
+                bc.home_axis(pin_num = 7, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_2_calibration, direction_modifier = -1)
+                self.joint_2_current_degrees_label.setText(str(bc.joint_2_calibration[2]))
+                self.home_joints(joint_to_home = 6)
+            elif joint_to_home == 6:
+                bc.home_axis(pin_num = 2, joint_num = joint_to_home, gear_reduction = 5, joint_calibration_array = bc.joint_6_calibration, direction_modifier = 1)
+                self.joint_6_current_degrees_label.setText(str(bc.joint_6_calibration[2]))
+                print("all joints homed")
 
     def refresh_dropdown_list(self, btn_to_update, dropdown_to_update, dir_path):
         file_list = os.listdir(dir_path)
