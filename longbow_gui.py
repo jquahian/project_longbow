@@ -300,23 +300,10 @@ class App(QWidget):
     def calibrate_all(self):
         if self.is_connected:
             bc.calibrate_all()
-            calibrate_message = QMessageBox()
-            calibrate_message.setFixedSize(400, 150)
-            calibrate_message.setIcon(QMessageBox.Information)
-            calibrate_message.setStandardButtons(QMessageBox.Ok)
-            calibrate_message.setWindowTitle("Calibrated")
-            calibrate_message.setText("Longbow Calibration Complete")
-            calibrate_message.exec_()
-            
+            self.create_message_box("Calibrated", "Longbow Calibration Complete")            
             self.is_calibrated = True
         else:
-            calibrate_message = QMessageBox()
-            calibrate_message.setFixedSize(400, 150)
-            calibrate_message.setIcon(QMessageBox.Information)
-            calibrate_message.setStandardButtons(QMessageBox.Ok)
-            calibrate_message.setWindowTitle("Longbow Connection Needed")
-            calibrate_message.setText("Connection Missing")
-            calibrate_message.exec_()
+            self.create_message_box("Connection Needed", "Longbow Not Connected")
 
     def home_joints(self, joint_to_home):
         if self.is_connected and self.is_calibrated:
@@ -328,7 +315,7 @@ class App(QWidget):
             elif joint_to_home == 6:
                 bc.home_axis(pin_num = 2, joint_num = joint_to_home, gear_reduction = 5, joint_calibration_array = bc.joint_6_calibration, direction_modifier = 1)
                 self.joint_6_current_degrees_label.setText(str(bc.joint_6_calibration[2]))
-                print("all joints homed")
+                self.create_message_box("Homing Complete", "Longbow Now Homed")
 
     def refresh_dropdown_list(self, btn_to_update, dropdown_to_update, dir_path):
         file_list = os.listdir(dir_path)
@@ -480,6 +467,15 @@ class App(QWidget):
 
             if self.is_connected and self.is_calibrated:
                 bc.move_axis_absolute(joint_number, motor_encoder_count)
+
+    def create_message_box(self, window_title, window_text):
+        msg_box = QMessageBox()
+        msg_box.setFixedSize(400, 150)
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setStandardButtons(QMessageBox.Ok)
+        msg_box.setWindowTitle(window_title)
+        msg_box.setText(window_text)
+        msg_box.exec_()
 
 def main():
     app = QApplication(sys.argv)
