@@ -96,40 +96,28 @@ while done == False:
 
             # axis 1
             if controller_axis == 0 and abs(axis_value) >= 0.70:
-                bc.move_axis(1,
-                             reduction_125,
-                             axis_value)
+                bc.move_axis_incremental(1, reduction_125, axis_value)
 
             # axis 2
             if controller_axis == 1 and abs(axis_value) >= 0.70:
-                bc.move_axis(2,
-                             reduction_125,
-                             axis_value)
+                bc.move_axis_incremental(2, reduction_125, axis_value)
 
             # axis 3
             if controller_axis == 3 and abs(axis_value) >= 0.70:
-                bc.move_axis(3,
-                             reduction_125,
-                             axis_value)
+                bc.move_axis_incremental(3, reduction_125, axis_value)
 
             # axis 4
             # switch axis value sign to correct joystick position
             if controller_axis == 2 and abs(axis_value) >= 0.70:
-                bc.move_axis(4,
-                             reduction_125,
-                             -axis_value)
+                bc.move_axis_incremental(4, reduction_125, -axis_value)
 
             # axis 5 - counter-clockwise
             if controller_axis == 4 and abs(axis_value) >= 0.70:
-                bc.move_axis(5,
-                             reduction_125,
-                             -axis_value)
+                bc.move_axis_incremental(5, reduction_125, -axis_value)
 
             # axis 5 - clockwise
             if controller_axis == 5 and abs(axis_value) >= 0.70:
-                bc.move_axis(5,
-                             reduction_125,
-                             axis_value)
+                bc.move_axis_incremental(5, reduction_125, axis_value)
 
         # button input
         # button outputs are either 0/1
@@ -138,20 +126,14 @@ while done == False:
 
             # axis 6 - counter-clockwise
             if button == 4 and btn_value == 1:
-                bc.move_axis(6,
-                             reduction_5,
-                             -axis_value)
+                bc.move_axis_incremental(6, reduction_5, -axis_value)
 
             # axis 6 - clockwise
             if button == 5 and btn_value == 1:
-                bc.move_axis(6,
-                             reduction_5,
-                             axis_value)
+                bc.move_axis_incremental(6, reduction_5, axis_value)
 
-            # back button
-            # home robot (later) and shutdown program
+            # back button quits app
             if button == 6 and btn_value == 1:
-                bc.home_axis()
                 print("SHUTTING DOWN")
                 done = True
 
