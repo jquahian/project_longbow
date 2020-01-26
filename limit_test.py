@@ -5,12 +5,12 @@ board = pyfirmata.Arduino('/dev/ttyACM0')
 it = pyfirmata.util.Iterator(board)
 it.start()
 
-board.digital[7].mode = pyfirmata.INPUT
+board.digital[2].mode = pyfirmata.INPUT
 
 counter = 0
 
 while True:
-    sw = board.digital[7].read()
+    sw = board.digital[2].read()
 
     if sw is True:
         print(counter)
