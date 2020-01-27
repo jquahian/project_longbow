@@ -138,13 +138,23 @@ class App(QWidget):
         self.joint_6_current_degrees_label = QLabel('0.0')
 
         self.joint_1_slider = self.angle_slider()
+        self.joint_1_slider.setMaximum(bc.joint_1_max * 100)
+        
         self.joint_2_slider = self.angle_slider()
-        self.joint_2_slider.setMaximum(11500)
+        self.joint_2_slider.setMaximum(bc.joint_2_max * 100)
 
         self.joint_3_slider = self.angle_slider()
+        self.joint_3_slider.setMaximum(bc.joint_3_max * 100)
+        
         self.joint_4_slider = self.angle_slider()
+        self.joint_4_slider.setMaximum(bc.joint_4_max * 100)
+        
         self.joint_5_slider = self.angle_slider()
+        self.joint_5_slider.setMaximum(bc.joint_5_max * 100)
+        
         self.joint_6_slider = self.angle_slider()
+        self.joint_6_slider.setMaximum(bc.joint_6_max*  100)
+        
         layout.setColumnMinimumWidth(3, 500)
 
         self.readout_1 = QLineEdit()
@@ -444,11 +454,11 @@ class App(QWidget):
         joint_readout_num.setText(str(degree_readout))
 
     def set_degrees(self, joint_number, joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout, is_zero):
-        if float(readout_value.text()) * 100 > 27000 or float(readout_value.text()) * 100 < -27000:
+        if float(readout_value.text()) * 100 > joint_slider.maximum() or float(readout_value.text()) < 0:
             error_message = QErrorMessage()
             error_message.setFixedSize(700, 250)
             error_message.showMessage(
-                f"The Value of {float(readout_value.text())} degrees is out of range.  \nValue must be between +/- 270.0 degrees")
+                f"The Value of {float(readout_value.text())} degrees is out of range.  \nValue must be between 0 and {joint_slider.maximum() / 100} degrees")
             error_message.setWindowTitle("Error: value out of range")
             error_message.exec_()
             readout_value.setText("0.0")
