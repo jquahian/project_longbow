@@ -31,6 +31,7 @@ odrive_boards = [odrive_1, odrive_2, odrive_3]
 joint_1_max = 180
 joint_1_rest_pos = 0
 joint_1_home_pos = 0
+joint_1_calibration = [joint_1_home_pos, joint_1_max, joint_1_rest_pos]
 
 joint_2_max = 110
 joint_2_rest_pos = 30
@@ -40,16 +41,19 @@ joint_2_calibration = [joint_2_home_pos, joint_2_max, joint_2_rest_pos]
 joint_3_max = 120
 joint_3_rest_pos = 0
 joint_3_home_pos = 0
+joint_3_calibration = [joint_3_home_pos, joint_3_max, joint_3_rest_pos]
 
 joint_4_max = 180
 joint_4_rest_pos = 0
 joint_4_home_pos = 0
+joint_4_calibration = [joint_4_home_pos, joint_4_max, joint_4_rest_pos]
 
 joint_5_max = 90
 joint_5_rest_pos = 0
 joint_5_home_pos = 0
+joint_5_calibration = [joint_5_home_pos, joint_5_max, joint_5_rest_pos]
 
-joint_6_max = 360
+joint_6_max = 280
 joint_6_rest_pos = 90
 joint_6_home_pos = 0
 joint_6_calibration = [joint_6_home_pos, joint_6_max, joint_6_rest_pos]
@@ -140,13 +144,6 @@ def move_to_saved_pos(pos_index):
 		move_axis_absolute(4, j4_pos[pos_index])
 		move_axis_absolute(5, j5_pos[pos_index])
 		move_axis_absolute(6, j6_pos[pos_index])
-
-		# odrive_boards[0].axis0.controller.pos_setpoint = j1_pos[pos_index]
-		# odrive_boards[0].axis1.controller.pos_setpoint = -j2_pos[pos_index]
-		# odrive_boards[1].axis0.controller.pos_setpoint = j3_pos[pos_index] 
-		# odrive_boards[1].axis1.controller.pos_setpoint = j4_pos[pos_index] 
-		# odrive_boards[2].axis0.controller.pos_setpoint = -j5_pos[pos_index] 
-		# odrive_boards[2].axis1.controller.pos_setpoint = j6_pos[pos_index]
 
 		time.sleep(0.1)
 
