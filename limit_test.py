@@ -1,16 +1,27 @@
 import pyfirmata
 import time
 
+"""
+pin 2 = joint 1
+pin 3 = joint 2
+pin 4 = joint 3
+pin 5 = joint 4
+pin 6 = joint 5
+pin 7 = joint 6
+"""
+
+pin = 2
+
 board = pyfirmata.Arduino('/dev/ttyACM0')
 it = pyfirmata.util.Iterator(board)
 it.start()
 
-board.digital[3].mode = pyfirmata.INPUT
+board.digital[pin].mode = pyfirmata.INPUT
 
 buffer_counter = 0
 
 while True:
-    sw = board.digital[3].read()
+    sw = board.digital[pin].read()
 
     if sw is True:
         print("HIGH")

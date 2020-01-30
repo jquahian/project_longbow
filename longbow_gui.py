@@ -53,7 +53,7 @@ class App(QWidget):
 
         self.home_joints_btn = QPushButton("Home")
         layout.addWidget(self.home_joints_btn, 0, 2)
-        self.home_joints_btn.clicked.connect(lambda: self.home_joints(joint_to_home = 1))
+        self.home_joints_btn.clicked.connect(lambda: self.home_joints(joint_to_home = 4))
 
         self.app_list = QComboBox()
         layout.addWidget(self.app_list, 0, 3)
@@ -470,7 +470,7 @@ class App(QWidget):
         joint_readout_num.setText(str(degree_readout))
 
     def set_degrees(self, joint_number, joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout, is_zero):
-        if float(readout_value.text()) * 100 > joint_slider.maximum() or float(readout_value.text()) < 0:
+        if float(readout_value.text()) * 100 > joint_slider.maximum() or float(readout_value.text()) < -180:
             error_message = QErrorMessage()
             error_message.setFixedSize(700, 250)
             error_message.showMessage(
