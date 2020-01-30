@@ -53,7 +53,7 @@ class App(QWidget):
 
         self.home_joints_btn = QPushButton("Home")
         layout.addWidget(self.home_joints_btn, 0, 2)
-        self.home_joints_btn.clicked.connect(lambda: self.home_joints(joint_to_home = 4))
+        self.home_joints_btn.clicked.connect(lambda: self.home_joints(joint_to_home = 1))
 
         self.app_list = QComboBox()
         layout.addWidget(self.app_list, 0, 3)
