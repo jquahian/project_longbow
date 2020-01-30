@@ -53,7 +53,7 @@ class App(QWidget):
 
         self.home_joints_btn = QPushButton("Home")
         layout.addWidget(self.home_joints_btn, 0, 2)
-        self.home_joints_btn.clicked.connect(lambda: self.home_joints(joint_to_home = 1))
+        self.home_joints_btn.clicked.connect(lambda: self.home_joints(joint_to_home = 3))
 
         self.app_list = QComboBox()
         layout.addWidget(self.app_list, 0, 3)
@@ -323,19 +323,19 @@ class App(QWidget):
             elif joint_to_home == 2:
                 bc.home_axis(pin_num = 3, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_2_calibration, direction_modifier = 1)
                 self.joint_2_current_degrees_label.setText(str(bc.joint_2_calibration[2]))
+                self.home_joints(joint_to_home = 3)
+            elif joint_to_home == 3:
+                bc.home_axis(pin_num = 4, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_3_calibration, direction_modifier = 1)
+                self.joint_3_current_degrees_label.setText(str(bc.joint_3_calibration[2]))
                 self.home_joints(joint_to_home = 4)
-            # elif joint_to_home == 3:
-            #     bc.home_axis(pin_num = 4, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_3_calibration, direction_modifier = 1)
-            #     self.joint_3_current_degrees_label.setText(str(bc.joint_3_calibration[2]))
-            #     self.home_joints(joint_to_home = 4)
             elif joint_to_home == 4:
                 bc.home_axis(pin_num = 5, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_4_calibration, direction_modifier = 1)
                 self.joint_4_current_degrees_label.setText(str(bc.joint_4_calibration[2]))
+                self.home_joints(joint_to_home = 5)
+            elif joint_to_home == 5:
+                bc.home_axis(pin_num = 6, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_5_calibration, direction_modifier = 1)
+                self.joint_5_current_degrees_label.setText(str(bc.joint_5_calibration[2]))
                 self.home_joints(joint_to_home = 6)
-            # elif joint_to_home == 5:
-            #     bc.home_axis(pin_num = 6, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_5_calibration, direction_modifier = 1)
-            #     self.joint_5_current_degrees_label.setText(str(bc.joint_5_calibration[2]))
-            #     self.home_joints(joint_to_home = 6)
             elif joint_to_home == 6:
                 bc.home_axis(pin_num = 7, joint_num = joint_to_home, gear_reduction = 5, joint_calibration_array = bc.joint_6_calibration, direction_modifier = 1)
                 self.joint_6_current_degrees_label.setText(str(bc.joint_6_calibration[2]))

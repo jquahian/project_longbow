@@ -131,7 +131,7 @@ def move_axis_absolute(motor_axis, encoder_counts):
 		odrive_boards[1].axis1.controller.pos_setpoint = (joint_4_calibration[0] - encoder_counts)
 
 	if motor_axis == 5:
-		odrive_boards[2].axis0.controller.pos_setpoint = -(joint_5_calibration[0] - encoder_counts)
+		odrive_boards[2].axis0.controller.pos_setpoint = (joint_5_calibration[0] - encoder_counts)
 
 	if motor_axis == 6:
 		odrive_boards[2].axis1.controller.pos_setpoint = (joint_6_calibration[0] + encoder_counts)
@@ -163,7 +163,7 @@ def move_to_saved_pos(pos_index):
 def home_axis(pin_num, joint_num, gear_reduction, joint_calibration_array, direction_modifier):
 
 	print(f'homing joint {joint_num} on pin {pin_num}.')
-	arduino_board = pyfirmata.Arduino('/dev/ttyACM0')
+	arduino_board = pyfirmata.Arduino('/dev/ttyACM1')
 	
 	it = pyfirmata.util.Iterator(arduino_board)
 	it.start()

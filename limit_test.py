@@ -10,9 +10,9 @@ pin 6 = joint 5
 pin 7 = joint 6
 """
 
-pin = 2
+pin = 6
 
-board = pyfirmata.Arduino('/dev/ttyACM0')
+board = pyfirmata.Arduino('/dev/ttyACM1')
 it = pyfirmata.util.Iterator(board)
 it.start()
 
