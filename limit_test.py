@@ -10,9 +10,9 @@ pin 6 = joint 5
 pin 7 = joint 6
 """
 
-pin = 6
+pin = 5
 
-board = pyfirmata.Arduino('/dev/ttyACM1')
+board = pyfirmata.Arduino('/dev/ttyACM0')
 it = pyfirmata.util.Iterator(board)
 it.start()
 
@@ -22,7 +22,7 @@ buffer_counter = 0
 
 while True:
     sw = board.digital[pin].read()
-
+    
     if sw is True:
         print("HIGH")
     else:

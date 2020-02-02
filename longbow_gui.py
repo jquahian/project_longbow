@@ -4,6 +4,7 @@ import inverse_kin as ik
 import board_control as bc
 import os
 import csv
+import time
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import *
@@ -51,9 +52,9 @@ class App(QWidget):
         layout.addWidget(self.calibrate_btn, 0, 1)
         self.calibrate_btn.clicked.connect(lambda: self.calibrate_all())
 
-        self.home_joints_btn = QPushButton("Home")
-        layout.addWidget(self.home_joints_btn, 0, 2)
-        self.home_joints_btn.clicked.connect(lambda: self.home_joints(joint_to_home = 3))
+        # self.home_joints_btn = QPushButton("Home")
+        # layout.addWidget(self.home_joints_btn, 0, 2)
+        # self.home_joints_btn.clicked.connect(lambda: self.home_joints(joint_to_home = 1))
 
         self.app_list = QComboBox()
         layout.addWidget(self.app_list, 0, 3)
@@ -89,30 +90,30 @@ class App(QWidget):
         layout.addWidget(self.joint_header, 1, 0)
 
         self.joint_gear_ratio_label = QLabel("Gear \nReduction")
-        layout.addWidget(self.joint_gear_ratio_label, 1, 1)
+        layout.addWidget(self.joint_gear_ratio_label, 1, 2)
 
         self.degree_readout_header = QLabel("Current \nDegree")
-        layout.addWidget(self.degree_readout_header, 1, 2)
+        layout.addWidget(self.degree_readout_header, 1, 3)
 
         self.target_degree_header = QLabel("Target \nDegree")
-        layout.addWidget(self.target_degree_header, 1, 4)
+        layout.addWidget(self.target_degree_header, 1, 5)
 
         self.zero_all_btn = QPushButton("Zero All")
-        layout.addWidget(self.zero_all_btn, 10, 5)
+        layout.addWidget(self.zero_all_btn, 10, 6)
         self.zero_all_btn.clicked.connect(lambda: self.accept_all(True))
 
         self.accept_all_btn = QPushButton("Accept All")
-        layout.addWidget(self.accept_all_btn, 10, 6)
+        layout.addWidget(self.accept_all_btn, 10, 7)
         self.accept_all_btn.clicked.connect(lambda: self.accept_all(False))
 
         self.encoder_pos_header = QLabel("Current \nEncoder \nPosition")
-        layout.addWidget(self.encoder_pos_header, 1, 7)
+        layout.addWidget(self.encoder_pos_header, 1, 8)
 
         self.coordinate_header = QLabel("Coordinate \nInput")
-        layout.addWidget(self.coordinate_header, 1, 8)
+        layout.addWidget(self.coordinate_header, 1, 9)
 
         self.move_to_coord_btn = QPushButton("To Coordinates")
-        layout.addWidget(self.move_to_coord_btn, 10, 8)
+        layout.addWidget(self.move_to_coord_btn, 10, 10)
         self.move_to_coord_btn.clicked.connect(
             lambda: self.ik_move())
 
@@ -122,6 +123,25 @@ class App(QWidget):
         self.joint_4_header = QLabel('Joint 4')
         self.joint_5_header = QLabel('Joint 5')
         self.joint_6_header = QLabel('Joint 6')
+        
+        self.home_1 = QPushButton('home joint 1')
+        self.home_1.clicked.connect(lambda: self.home_joints(1, 2, 125, bc.joint_1_calibration, 1, self.joint_1_current_degrees_label))
+        
+        self.home_2 = QPushButton('home joint 2')
+        self.home_2.clicked.connect(lambda: self.home_joints(2, 3, 125, bc.joint_2_calibration, 1, self.joint_2_current_degrees_label))
+
+        self.home_3 = QPushButton('home joint 3')
+        self.home_3.clicked.connect(lambda: self.home_joints(3, 4, 125, bc.joint_3_calibration, 1, self.joint_3_current_degrees_label))
+
+        self.home_4 = QPushButton('home joint 4')
+        self.home_4.clicked.connect(lambda: self.home_joints(4, 5, 125, bc.joint_4_calibration, 1, self.joint_4_current_degrees_label))
+
+        self.home_5 = QPushButton('home joint 5')
+        self.home_5.clicked.connect(lambda: self.home_joints(5, 6, 125, bc.joint_5_calibration, 1, self.joint_5_current_degrees_label))
+
+        self.home_6 = QPushButton('home joint 6')
+        self.home_6.clicked.connect(lambda: self.home_joints(6, 7, 5, bc.joint_6_calibration, 1, self.joint_6_current_degrees_label))
+
 
         self.joint_1_gear_ratio = QLabel('125')
         self.joint_2_gear_ratio = QLabel('125')
@@ -155,7 +175,7 @@ class App(QWidget):
         self.joint_6_slider = self.angle_slider()
         self.joint_6_slider.setMaximum(bc.joint_6_max*  100)
         
-        layout.setColumnMinimumWidth(3, 500)
+        layout.setColumnMinimumWidth(4, 500)
 
         self.readout_1 = QLineEdit()
         self.readout_1.setText("0.0")
@@ -208,6 +228,8 @@ class App(QWidget):
 
         joint_headers = [self.joint_1_header, self.joint_2_header, self.joint_3_header,
                          self.joint_4_header, self.joint_5_header, self.joint_6_header]
+        
+        joint_home_btns = [self.home_1, self.home_2, self.home_3, self.home_4, self.home_5, self.home_6]
 
         joint_gear_ratios = [self.joint_1_gear_ratio, self.joint_2_gear_ratio, self.joint_3_gear_ratio,
                              self.joint_4_gear_ratio, self.joint_5_gear_ratio, self.joint_6_gear_ratio]
@@ -239,14 +261,15 @@ class App(QWidget):
 
         for i in range(6):
             layout.addWidget(joint_headers[i], 2 + i, 0)
-            layout.addWidget(joint_gear_ratios[i], 2 + i, 1)
-            layout.addWidget(joint_current_degrees[i], 2 + i, 2)
-            layout.addWidget(angle_sliders[i], 2 + i, 3)
-            layout.addWidget(readouts[i], 2 + i, 4)
-            layout.addWidget(zero_btns[i], 2 + i, 5)
-            layout.addWidget(accept_btns[i], 2 + i, 6)
-            layout.addWidget(encoder_pos_readouts[i], 2 + i, 7)
-            layout.addWidget(coordinate_inputs[i], 2 + i, 8)
+            layout.addWidget(joint_home_btns[i], 2 + i, 1)
+            layout.addWidget(joint_gear_ratios[i], 2 + i, 2)
+            layout.addWidget(joint_current_degrees[i], 2 + i, 3)
+            layout.addWidget(angle_sliders[i], 2 + i, 4)
+            layout.addWidget(readouts[i], 2 + i, 5)
+            layout.addWidget(zero_btns[i], 2 + i, 6)
+            layout.addWidget(accept_btns[i], 2 + i, 7)
+            layout.addWidget(encoder_pos_readouts[i], 2 + i, 8)
+            layout.addWidget(coordinate_inputs[i], 2 + i, 9)
 
         self.joint_1_slider.valueChanged.connect(
             lambda: self.input_slider_value(self.joint_1_slider, self.readout_1))
@@ -313,33 +336,10 @@ class App(QWidget):
         else:
             self.create_message_box("Connection Needed", "Longbow Not Connected")
 
-    def home_joints(self, joint_to_home):
+    def home_joints(self, joint_to_home, pin_num, gear_reduction, calibration_array, direction_modifier, label_to_modify):
         if self.is_connected and self.is_calibrated:
-
-            if joint_to_home == 1:
-                bc.home_axis(pin_num = 2, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_1_calibration, direction_modifier = -1)
-                self.joint_1_current_degrees_label.setText(str(bc.joint_1_calibration[2]))
-                self.home_joints(joint_to_home = 2)
-            elif joint_to_home == 2:
-                bc.home_axis(pin_num = 3, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_2_calibration, direction_modifier = 1)
-                self.joint_2_current_degrees_label.setText(str(bc.joint_2_calibration[2]))
-                self.home_joints(joint_to_home = 3)
-            elif joint_to_home == 3:
-                bc.home_axis(pin_num = 4, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_3_calibration, direction_modifier = 1)
-                self.joint_3_current_degrees_label.setText(str(bc.joint_3_calibration[2]))
-                self.home_joints(joint_to_home = 4)
-            elif joint_to_home == 4:
-                bc.home_axis(pin_num = 5, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_4_calibration, direction_modifier = 1)
-                self.joint_4_current_degrees_label.setText(str(bc.joint_4_calibration[2]))
-                self.home_joints(joint_to_home = 5)
-            elif joint_to_home == 5:
-                bc.home_axis(pin_num = 6, joint_num = joint_to_home, gear_reduction = 125, joint_calibration_array = bc.joint_5_calibration, direction_modifier = 1)
-                self.joint_5_current_degrees_label.setText(str(bc.joint_5_calibration[2]))
-                self.home_joints(joint_to_home = 6)
-            elif joint_to_home == 6:
-                bc.home_axis(pin_num = 7, joint_num = joint_to_home, gear_reduction = 5, joint_calibration_array = bc.joint_6_calibration, direction_modifier = 1)
-                self.joint_6_current_degrees_label.setText(str(bc.joint_6_calibration[2]))
-                self.create_message_box("Homing Complete", "Longbow Now Homed")
+            bc.home_axis(pin_num = pin_num, joint_num = joint_to_home, gear_reduction = gear_reduction, joint_calibration_array = calibration_array, direction_modifier = direction_modifier)
+            label_to_modify.setText(str(calibration_array[2]))
 
     def refresh_dropdown_list(self, btn_to_update, dropdown_to_update, dir_path):
         file_list = os.listdir(dir_path)
