@@ -45,17 +45,17 @@ joint_2_home_pos = 0
 joint_2_calibration = [joint_2_home_pos, joint_2_max, joint_2_rest_pos]
 
 joint_3_max = 180
-joint_3_rest_pos = 30
+joint_3_rest_pos = 40
 joint_3_home_pos = 0
 joint_3_calibration = [joint_3_home_pos, joint_3_max, joint_3_rest_pos]
 
 joint_4_max = 220
-joint_4_rest_pos = 45
+joint_4_rest_pos = 90
 joint_4_home_pos = 0
 joint_4_calibration = [joint_4_home_pos, joint_4_max, joint_4_rest_pos]
 
 joint_5_max = 180
-joint_5_rest_pos = 120
+joint_5_rest_pos = 90
 joint_5_home_pos = 0
 joint_5_calibration = [joint_5_home_pos, joint_5_max, joint_5_rest_pos]
 
@@ -167,21 +167,20 @@ def move_to_saved_pos(pos_index):
 		print('final point reached')
 	
 def home_axis(pin_num, joint_num, gear_reduction, joint_calibration_array, direction_modifier):
+	# temporary solution to not having access to the arduino's PULLUP resistor.
+	# need a hardware resistsor in the circuit...
+	buffer_counter = 0
 	
 	arduino_board.digital[pin_num].mode = pyfirmata.INPUT
 	
 	print(f'homing joint {joint_num} on pin {pin_num}.')
-
-	# temporary solution to not having access to the arduino's PULLUP resistor.
-	# need a hardware resistsor in the circuit...
-	buffer_counter = 0
 
 	while True:
 		joint_limit_status = arduino_board.digital[pin_num].read()
 
 		# move in 2 degree incriments until we hit the limit switch
 		if joint_limit_status is True:
-			move_axis_incremental(joint_num, dc.return_counts(2.0, gear_reduction), direction_modifier)
+			move_axis_incremental(joint_num, dc.return_counts(1.0, gear_reduction), direction_modifier)
 		else:
 			buffer_counter += 1
 			if buffer_counter >= 2:
