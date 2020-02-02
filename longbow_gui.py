@@ -120,22 +120,22 @@ class App(QWidget):
         self.joint_5_header = QLabel('Joint 5')
         self.joint_6_header = QLabel('Joint 6')
         
-        self.home_1 = QPushButton('home joint 1')
+        self.home_1 = QPushButton('Home')
         self.home_1.clicked.connect(lambda: self.home_joints(1, 2, 125, bc.joint_1_calibration, 1, self.joint_1_current_degrees_label))
         
-        self.home_2 = QPushButton('home joint 2')
+        self.home_2 = QPushButton('Home')
         self.home_2.clicked.connect(lambda: self.home_joints(2, 3, 125, bc.joint_2_calibration, 1, self.joint_2_current_degrees_label))
 
-        self.home_3 = QPushButton('home joint 3')
+        self.home_3 = QPushButton('Home')
         self.home_3.clicked.connect(lambda: self.home_joints(3, 4, 125, bc.joint_3_calibration, 1, self.joint_3_current_degrees_label))
 
-        self.home_4 = QPushButton('home joint 4')
+        self.home_4 = QPushButton('Home')
         self.home_4.clicked.connect(lambda: self.home_joints(4, 5, 125, bc.joint_4_calibration, 1, self.joint_4_current_degrees_label))
 
-        self.home_5 = QPushButton('home joint 5')
+        self.home_5 = QPushButton('Home')
         self.home_5.clicked.connect(lambda: self.home_joints(5, 6, 125, bc.joint_5_calibration, 1, self.joint_5_current_degrees_label))
 
-        self.home_6 = QPushButton('home joint 6')
+        self.home_6 = QPushButton('Home')
         self.home_6.clicked.connect(lambda: self.home_joints(6, 7, 5, bc.joint_6_calibration, 1, self.joint_6_current_degrees_label))
 
 
@@ -336,6 +336,8 @@ class App(QWidget):
         if self.is_connected and self.is_calibrated:
             bc.home_axis(pin_num = pin_num, joint_num = joint_to_home, gear_reduction = gear_reduction, joint_calibration_array = calibration_array, direction_modifier = direction_modifier)
             label_to_modify.setText(str(calibration_array[2]))
+            
+            self.create_message_box(f'Joint {joint_to_home} Homed', f'Joint {joint_to_home} now homed')
 
     def refresh_dropdown_list(self, btn_to_update, dropdown_to_update, dir_path):
         file_list = os.listdir(dir_path)
