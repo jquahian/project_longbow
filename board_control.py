@@ -5,7 +5,9 @@ import pyfirmata
 import degrees_calc as dc
 from odrive.enums import *
 
-arduino_board = pyfirmata.Arduino('/dev/ttyACM0')
+port = 3
+
+arduino_board = pyfirmata.Arduino(f'/dev/ttyACM{str(port)}')
 
 it = pyfirmata.util.Iterator(arduino_board)
 it.start()
@@ -167,8 +169,7 @@ def move_to_saved_pos(pos_index):
 		print('final point reached')
 	
 def home_axis(pin_num, joint_num, gear_reduction, joint_calibration_array, direction_modifier):
-	# temporary solution to not having access to the arduino's PULLUP resistor.
-	# need a hardware resistsor in the circuit...
+	# even with pullup resistors, the first value returned is always low with firmata...
 	buffer_counter = 0
 	
 	arduino_board.digital[pin_num].mode = pyfirmata.INPUT

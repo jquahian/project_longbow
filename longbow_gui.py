@@ -193,12 +193,12 @@ class App(QWidget):
         self.zero_5 = QPushButton('Zero')
         self.zero_6 = QPushButton('Zero')
 
-        self.accept_1 = QPushButton('Accept')
-        self.accept_2 = QPushButton('Accept')
-        self.accept_3 = QPushButton('Accept')
-        self.accept_4 = QPushButton('Accept')
-        self.accept_5 = QPushButton('Accept')
-        self.accept_6 = QPushButton('Accept')
+        self.accept_1 = QPushButton('Move Absolute')
+        self.accept_2 = QPushButton('Move Absolute')
+        self.accept_3 = QPushButton('Move Absolute')
+        self.accept_4 = QPushButton('Move Absolute')
+        self.accept_5 = QPushButton('Move Absolute')
+        self.accept_6 = QPushButton('Move Absolute')
 
         self.encoder_pos_1 = QLabel('0')
         self.encoder_pos_2 = QLabel('0')
@@ -336,6 +336,7 @@ class App(QWidget):
         if self.is_connected and self.is_calibrated:
             bc.home_axis(pin_num = pin_num, joint_num = joint_to_home, gear_reduction = gear_reduction, joint_calibration_array = calibration_array, direction_modifier = direction_modifier)
             label_to_modify.setText(str(calibration_array[2]))
+            time.sleep(2.0)
             
             self.create_message_box(f'Joint {joint_to_home} Homed', f'Joint {joint_to_home} now homed')
 
@@ -479,16 +480,34 @@ class App(QWidget):
         else:
             if is_zero == True:
                 readout_value.setText("0.0")
+                
+            self.set_joint_position_readouts(joint_number, joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout)
 
+            # readout_to_slider = float(readout_value.text()) * 100
+            # joint_degrees_label.setText(str(readout_value.text()))
+            # joint_slider.setSliderPosition(int(readout_to_slider))
+            # motor_encoder_count = dc.return_counts(
+            #     float(joint_degrees_label.text()), gear_ratio)
+            # encoder_readout.setText(str(motor_encoder_count))
+            
+
+            if self.is_connected and self.is_calibrated:
+                self.return_encoder_counts(joint_degrees_label, gear_ratio, encoder_readout)
+                bc.move_axis_absolute(joint_number, self.motor_encoder_count)
+
+    def set_joint_position_readouts(self, joint_number, joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout):
             readout_to_slider = float(readout_value.text()) * 100
             joint_degrees_label.setText(str(readout_value.text()))
             joint_slider.setSliderPosition(int(readout_to_slider))
-            motor_encoder_count = dc.return_counts(
-                float(joint_degrees_label.text()), gear_ratio)
-            encoder_readout.setText(str(motor_encoder_count))
-
-            if self.is_connected and self.is_calibrated:
-                bc.move_axis_absolute(joint_number, motor_encoder_count)
+            self.return_encoder_counts(joint_degrees_label, gear_ratio, encoder_readout)
+            encoder_readout.setText(str(self.motor_encoder_count))
+    
+    def return_encoder_counts(self, joint_degrees_label, gear_ratio, encoder_readout):
+            motor_encoder_count = dc.return_counts(float(joint_degrees_label.text()), gear_ratio)
+            self.motor_encoder_count = motor_encoder_count
+            
+            return self.motor_encoder_count
+        
 
     def create_message_box(self, window_title, window_text):
         msg_box = QMessageBox()
