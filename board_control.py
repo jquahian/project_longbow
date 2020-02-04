@@ -5,7 +5,7 @@ import pyfirmata
 import degrees_calc as dc
 from odrive.enums import *
 
-port = 3
+port = 0
 
 arduino_board = pyfirmata.Arduino(f'/dev/ttyACM{str(port)}')
 
