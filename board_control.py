@@ -52,7 +52,7 @@ joint_3_home_pos = 0
 joint_3_calibration = [joint_3_home_pos, joint_3_max, joint_3_rest_pos]
 
 joint_4_max = 220
-joint_4_rest_pos = 90
+joint_4_rest_pos = 75
 joint_4_home_pos = 0
 joint_4_calibration = [joint_4_home_pos, joint_4_max, joint_4_rest_pos]
 
@@ -62,7 +62,7 @@ joint_5_home_pos = 0
 joint_5_calibration = [joint_5_home_pos, joint_5_max, joint_5_rest_pos]
 
 joint_6_max = 280
-joint_6_rest_pos = 180
+joint_6_rest_pos = 170
 joint_6_home_pos = 0
 joint_6_calibration = [joint_6_home_pos, joint_6_max, joint_6_rest_pos]
 
