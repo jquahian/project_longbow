@@ -4,9 +4,10 @@ theta_1 = 0
 theta_2 = 0
 theta_3 = 0
 
-a_1 = 200
-a_2 = 200
-a_3 = 200
+a_1 = 54.975
+a_2 = 168.742
+a_3 = 286.164
+joint_6_offset = 97.905
 
 def cosine_law_angle(side_a, side_b, side_c):
 	angle = math.acos((side_c**2 - side_a**2 - side_b**2) /
@@ -45,4 +46,9 @@ def to_coordinate(x, y, z):
 	# base joint - first revolute joint on x-y plane
 	theta_3 = round(math.degrees(math.asin(y / x)), 2)
 
+	print(theta_1, theta_2, theta_3)
+ 
 	return theta_1, theta_2, theta_3
+
+
+to_coordinate(191.377, 0, 124.561)
