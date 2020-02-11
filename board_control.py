@@ -5,7 +5,7 @@ import pyfirmata
 import degrees_calc as dc
 from odrive.enums import *
 
-port = 3
+port = 1
 
 arduino_board = pyfirmata.Arduino(f'/dev/ttyACM{str(port)}')
 
@@ -37,7 +37,7 @@ j6_pos = []
 odrive_boards = [odrive_1, odrive_2, odrive_3]
 
 joint_1_max = 90
-joint_1_rest_pos = 45
+joint_1_rest_pos = 40
 joint_1_home_pos = 0
 joint_1_calibration = [joint_1_home_pos, joint_1_max, joint_1_rest_pos]
 

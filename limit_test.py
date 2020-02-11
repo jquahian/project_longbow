@@ -12,7 +12,7 @@ pin 7 = joint 6
 
 pin = 2
 
-port = 3
+port = 1
 
 board = pyfirmata.Arduino(f'/dev/ttyACM{str(port)}')
 it = pyfirmata.util.Iterator(board)
