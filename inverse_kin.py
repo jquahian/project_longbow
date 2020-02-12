@@ -3,7 +3,7 @@ import math
 # constants
 
 # distance from ground to joint 2 (mm)
-a_1 = 391.000
+a_1 = 216.000
 
 # distance from joint 2 to joint 3 (mm)
 a_2 = 168.742
@@ -102,4 +102,4 @@ def transform_to_coordinate_frame(theta_1, theta_2, theta_3):
 
 
 # set the approach coordinate to be two tool lengths away
-to_coordinate(597.918 - 2 * tool_offset, 0.000, 260.000)
+to_coordinate(597.918 - tool_offset, 0.000, 260.000)
