@@ -433,8 +433,9 @@ class App(QWidget):
             bc.joint_angles[0], bc.joint_angles[1], bc.joint_angles[2], x_coord, y_coord, z_coord, 'parallel')
         
         # update the angles between joints
+        # this needs to happen even when we move the robot without the use of the IK solver...
         bc.joint_angles[0] = ik.deltas[0]
-        bc.joint_angles[1] = ik.deltas[1]
+        bc.joint_angles[1] = bc.joint_angles[1] + ik.deltas[1]
         bc.joint_angles[2] = ik.deltas[2]
         
         # calculate the new absolute position of each joint
@@ -455,6 +456,8 @@ class App(QWidget):
         self.x_coord_input.setText('0.00')
         self.y_coord_input.setText('0.00')
         self.z_coord_input.setText('0.00')
+        
+        print(bc.joint_angles[0], bc.joint_angles[1], bc.joint_angles[2])
 
     def accept_all(self, is_zero):
         self.set_degrees(1, self.joint_1_slider, self.joint_1_current_degrees_label,
