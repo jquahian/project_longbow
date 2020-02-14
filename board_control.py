@@ -5,14 +5,14 @@ import pyfirmata
 import degrees_calc as dc
 from odrive.enums import *
 
-port = 0
+# port = 0
 
-arduino_board = pyfirmata.Arduino(f'/dev/ttyACM{str(port)}')
+# arduino_board = pyfirmata.Arduino(f'/dev/ttyACM{str(port)}')
 
-it = pyfirmata.util.Iterator(arduino_board)
-it.start()
+# it = pyfirmata.util.Iterator(arduino_board)
+# it.start()
 
-time.sleep(5)
+# time.sleep(5)
 
 # board with axis 1, 2
 board_1_num = '20873592524B'
@@ -68,13 +68,19 @@ joint_6_calibration = [joint_6_home_pos, joint_6_max, joint_6_rest_pos]
 
 # these values are needed for IK
 # these values are only 'correct' immidiately after homing and will be updated as the arm actually moves
+joint_1_origin_angle = 0
 joint_2_origin_angle = 0
 joint_2_3_angle = 90
-joint_3_6_angle = 0
+joint_3_4_angle = 0
+joint_4_5_angle = 0
+joint_5_6_angle = 0
 
-joint_angles = [joint_2_origin_angle,
+joint_angles = [joint_1_origin_angle,
+    			joint_2_origin_angle,
                 joint_2_3_angle,
-                joint_3_6_angle]
+                joint_3_4_angle,
+                joint_4_5_angle,
+                joint_5_6_angle]
 
 def connect_to():
 	# global odrive_boards

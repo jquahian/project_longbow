@@ -121,23 +121,11 @@ class App(QWidget):
         self.joint_6_header = QLabel('Joint 6')
         
         self.home_1 = QPushButton('Home')
-        self.home_1.clicked.connect(lambda: self.home_joints(1, 2, 125, bc.joint_1_calibration, 1, self.joint_1_current_degrees_label))
-        
         self.home_2 = QPushButton('Home')
-        self.home_2.clicked.connect(lambda: self.home_joints(2, 3, 125, bc.joint_2_calibration, 1, self.joint_2_current_degrees_label))
-
         self.home_3 = QPushButton('Home')
-        self.home_3.clicked.connect(lambda: self.home_joints(3, 4, 125, bc.joint_3_calibration, 1, self.joint_3_current_degrees_label))
-
         self.home_4 = QPushButton('Home')
-        self.home_4.clicked.connect(lambda: self.home_joints(4, 5, 125, bc.joint_4_calibration, 1, self.joint_4_current_degrees_label))
-
         self.home_5 = QPushButton('Home')
-        self.home_5.clicked.connect(lambda: self.home_joints(5, 6, 125, bc.joint_5_calibration, 1, self.joint_5_current_degrees_label))
-
         self.home_6 = QPushButton('Home')
-        self.home_6.clicked.connect(lambda: self.home_joints(6, 7, 5, bc.joint_6_calibration, 1, self.joint_6_current_degrees_label))
-
 
         self.joint_1_gear_ratio = QLabel('125')
         self.joint_2_gear_ratio = QLabel('125')
@@ -283,6 +271,19 @@ class App(QWidget):
         self.joint_6_slider.valueChanged.connect(
             lambda: self.input_slider_value(self.joint_6_slider, self.readout_6))
 
+        self.home_1.clicked.connect(lambda: self.home_joints(1, 2, 125, bc.joint_1_calibration, 1,
+                                                             self.joint_1_current_degrees_label, self.joint_1_slider, self.readout_1, self.encoder_pos_1))
+        self.home_2.clicked.connect(lambda: self.home_joints(2, 3, 125, bc.joint_2_calibration, 1,
+                                                             self.joint_2_current_degrees_label, self.joint_2_slider, self.readout_2, self.encoder_pos_2))
+        self.home_3.clicked.connect(lambda: self.home_joints(3, 4, 125, bc.joint_3_calibration, 1,
+                                                             self.joint_3_current_degrees_label, self.joint_3_slider, self.readout_3, self.encoder_pos_3))
+        self.home_4.clicked.connect(lambda: self.home_joints(4, 5, 125, bc.joint_4_calibration, 1,
+                                                             self.joint_4_current_degrees_label, self.joint_4_slider, self.readout_4, self.encoder_pos_4))
+        self.home_5.clicked.connect(lambda: self.home_joints(5, 6, 125, bc.joint_5_calibration, 1,
+                                                             self.joint_5_current_degrees_label, self.joint_5_slider, self.readout_5, self.encoder_pos_5))
+        self.home_6.clicked.connect(lambda: self.home_joints(6, 7, 5, bc.joint_6_calibration, 1,
+                                                             self.joint_6_current_degrees_label, self.joint_6_slider, self.readout_6, self.encoder_pos_6))
+
         self.zero_1.clicked.connect(
             lambda: self.set_degrees(1, self.joint_1_slider, self.joint_1_current_degrees_label, self.readout_1, 125, self.encoder_pos_1, True))
         self.zero_2.clicked.connect(
@@ -335,14 +336,18 @@ class App(QWidget):
         else:
             self.create_message_box("Connection Needed", "Longbow Not Connected")
 
-    def home_joints(self, joint_to_home, pin_num, gear_reduction, calibration_array, direction_modifier, label_to_modify):
+    def home_joints(self, joint_to_home, pin_num, gear_reduction, calibration_array, direction_modifier, label_to_modify, joint_slider_num, readout_value, encoder_readout):
+        
+        readout_value.setText(str(calibration_array[2]))
+        self.set_joint_position_readouts(joint_slider_num, label_to_modify, readout_value, gear_reduction, encoder_readout)
+        
         if self.is_connected and self.is_calibrated:
             bc.home_axis(pin_num = pin_num, joint_num = joint_to_home, gear_reduction = gear_reduction, joint_calibration_array = calibration_array, direction_modifier = direction_modifier)
-            label_to_modify.setText(str(calibration_array[2]))
-            time.sleep(2.0)
-            
-            self.create_message_box(f'Joint {joint_to_home} Homed', f'Joint {joint_to_home} now homed')
 
+            time.sleep(2.0)
+
+            self.create_message_box(f'Joint {joint_to_home} Homed', f'Joint {joint_to_home} now homed')
+        
     def refresh_dropdown_list(self, btn_to_update, dropdown_to_update, dir_path):
         file_list = os.listdir(dir_path)
         
@@ -423,30 +428,45 @@ class App(QWidget):
         self.readout_4.setText(str(self.saved_degree_rows[final_joint_pos][3]))
         self.readout_5.setText(str(self.saved_degree_rows[final_joint_pos][4]))
         self.readout_6.setText(str(self.saved_degree_rows[final_joint_pos][5]))
+        
+        # NEED TO UPDATE DEGREES BETWEEN JOINTS!!!
     
     def ik_move(self):
+        
+        '''
+        only working in x-z plane for now
+        '''
+        
         x_coord = float(self.x_coord_input.text())
         y_coord = float(self.y_coord_input.text())
         z_coord = float(self.z_coord_input.text())
 
         ik.to_coordinate(
-            bc.joint_angles[0], bc.joint_angles[1], bc.joint_angles[2], x_coord, y_coord, z_coord, 'parallel')
+            bc.joint_angles[1], bc.joint_angles[2], bc.joint_angles[5], x_coord, y_coord, z_coord, 'parallel')
         
         # update the angles between joints
         # this needs to happen even when we move the robot without the use of the IK solver...
-        bc.joint_angles[0] = ik.deltas[0]
-        bc.joint_angles[1] = bc.joint_angles[1] + ik.deltas[1]
-        bc.joint_angles[2] = ik.deltas[2]
+        bc.joint_angles[1] = ik.deltas[0]
+        bc.joint_angles[2] = bc.joint_angles[2] + ik.deltas[1]
+        bc.joint_angles[5] = ik.deltas[2]
         
         # calculate the new absolute position of each joint
         joint_2_new_position = float(self.joint_2_current_degrees_label.text()) + ik.deltas[0]
         joint_3_new_position = float(self.joint_3_current_degrees_label.text()) + ik.deltas[1]
         joint_5_new_position = float(self.joint_5_current_degrees_label.text()) + ik.deltas[2]
         
-        # update the readout of where the joints are supposed to be
-        self.readout_2.setText(str(joint_2_new_position))
-        self.readout_3.setText(str(joint_3_new_position))
-        self.readout_5.setText(str(joint_5_new_position))
+        # update the readout and other positional GUI elements of where the joints are going to move to
+        self.readout_2.setText(str(round(joint_2_new_position, 3)))
+        self.readout_3.setText(str(round(joint_3_new_position, 3)))
+        self.readout_5.setText(str(round(joint_5_new_position, 3)))
+
+        self.set_joint_position_readouts(self.joint_2_slider, self.joint_2_current_degrees_label, self.readout_2, 125, self.encoder_pos_2)
+        
+        self.set_joint_position_readouts(
+            self.joint_3_slider, self.joint_3_current_degrees_label, self.readout_3, 125, self.encoder_pos_3)
+        
+        self.set_joint_position_readouts(
+            self.joint_5_slider, self.joint_5_current_degrees_label, self.readout_5, 125, self.encoder_pos_5)
 
         # clears all input to prep for new coordinates
         self.x_coord_input.clear()
@@ -457,7 +477,7 @@ class App(QWidget):
         self.y_coord_input.setText('0.00')
         self.z_coord_input.setText('0.00')
         
-        print(bc.joint_angles[0], bc.joint_angles[1], bc.joint_angles[2])
+        print(bc.joint_angles[1], bc.joint_angles[2], bc.joint_angles[5])
 
     def accept_all(self, is_zero):
         self.set_degrees(1, self.joint_1_slider, self.joint_1_current_degrees_label,
@@ -472,6 +492,13 @@ class App(QWidget):
                          self.readout_5, 125, self.encoder_pos_5, is_zero)
         self.set_degrees(6, self.joint_6_slider, self.joint_6_current_degrees_label,
                          self.readout_6, 5, self.encoder_pos_6, is_zero)
+
+        # can't do this like this -- put it in a for loop
+        
+        self.update_joint_deltas(bc.joint_angles[1], self.joint_2_current_degrees_label.text(), self.readout_2.text())
+        self.update_joint_deltas(bc.joint_angles[2], self.joint_3_current_degrees_label.text(), self.readout_3.text())
+        self.update_joint_deltas(
+            bc.joint_angles[5], self.joint_5_current_degrees_label.text(), self.readout_5.text())
 
     def angle_slider(self):
         self.joint_degree_slider = QSlider(Qt.Horizontal)
@@ -496,13 +523,19 @@ class App(QWidget):
             if is_zero == True:
                 readout_value.setText("0.0")
                 
-            self.set_joint_position_readouts(joint_number, joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout)
+            self.set_joint_position_readouts(joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout)
 
             if self.is_connected and self.is_calibrated:
                 self.return_encoder_counts(joint_degrees_label, gear_ratio, encoder_readout)
                 bc.move_axis_absolute(joint_number, self.motor_encoder_count)
+    
+    def update_joint_deltas(self, current_angle_between_joints, new_absolute_angle, current_absolute_angle):
+        current_angle_between_joints = current_angle_between_joints + (float(new_absolute_angle) - float(current_absolute_angle))
 
-    def set_joint_position_readouts(self, joint_number, joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout):
+        print(
+            f'joint 2 angle: {bc.joint_angles[1]} \njoint 3 angle: {current_angle_between_joints} \njoint 6 angle: {bc.joint_angles[5]} \n')
+                
+    def set_joint_position_readouts(self, joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout):
             readout_to_slider = float(readout_value.text()) * 100
             joint_degrees_label.setText(str(readout_value.text()))
             joint_slider.setSliderPosition(int(readout_to_slider))

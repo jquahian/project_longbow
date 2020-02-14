@@ -42,7 +42,7 @@ def cosine_law_length(side_a, side_b, theta):
 	return length
 
 
-def to_coordinate(joint_2_origin_angle, joint_2_3_angle, joint_3_6_angle, x, y, z, approach):
+def to_coordinate(joint_2_origin_angle, joint_2_3_angle, joint_5_6_angle, x, y, z, approach):
 
 	r_1 = math.sqrt(x**2 + z**2)
 
@@ -66,12 +66,10 @@ def to_coordinate(joint_2_origin_angle, joint_2_3_angle, joint_3_6_angle, x, y, 
 	# base joint - first revolute joint on x-y plane
 	thetas[2] = round(math.degrees(math.asin(y / x)), 2)
 
-	# print(f'joint 2: {thetas[0]} \njoint 3: {thetas[1]} \njoint 1: {thetas[2]}')
-
 	calculate_deltas(
-		joint_2_origin_angle, joint_2_3_angle, joint_3_6_angle, thetas[0], thetas[1], thetas[2], approach)
+		joint_2_origin_angle, joint_2_3_angle, joint_5_6_angle, thetas[0], thetas[1], thetas[2], approach)
 
-def calculate_deltas(joint_2_origin_angle, joint_2_3_angle, joint_3_6_angle, theta_1, theta_2, theta_3, approach):
+def calculate_deltas(joint_2_origin_angle, joint_2_3_angle, joint_5_6_angle, theta_1, theta_2, theta_3, approach):
 	# joint 2 always relative to vertical z which will never change.
 	# theta_1 is now the new angle for joint 2 apply it to the current joint position
 	deltas[0] = theta_1
