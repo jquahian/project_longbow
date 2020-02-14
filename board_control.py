@@ -7,10 +7,10 @@ from odrive.enums import *
 
 port = 3
 
-arduino_board = pyfirmata.Arduino(f'/dev/ttyACM{str(port)}')
+# arduino_board = pyfirmata.Arduino(f'/dev/ttyACM{str(port)}')
 
-it = pyfirmata.util.Iterator(arduino_board)
-it.start()
+# it = pyfirmata.util.Iterator(arduino_board)
+# it.start()
 
 time.sleep(5)
 
@@ -65,6 +65,16 @@ joint_6_max = 280
 joint_6_rest_pos = 167
 joint_6_home_pos = 0
 joint_6_calibration = [joint_6_home_pos, joint_6_max, joint_6_rest_pos]
+
+# these values are needed for IK
+# these values are only 'correct' immidiately after homing and will be updated as the arm actually moves
+joint_2_origin_angle = 0
+joint_2_3_angle = 90
+joint_3_6_angle = 0
+
+joint_angles = [joint_2_origin_angle,
+                joint_2_3_angle,
+                joint_3_6_angle]
 
 def connect_to():
 	# global odrive_boards
@@ -143,7 +153,7 @@ def move_axis_absolute(motor_axis, encoder_counts):
 
 	if motor_axis == 6:
 		odrive_boards[2].axis1.controller.pos_setpoint = (joint_6_calibration[0] - encoder_counts)
-
+  
 def move_to_saved_pos(pos_index):
 	if pos_index < len(j1_pos):
 		move_axis_absolute(1, j1_pos[pos_index])

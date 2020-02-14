@@ -207,20 +207,23 @@ class App(QWidget):
         self.encoder_pos_5 = QLabel('0')
         self.encoder_pos_6 = QLabel('0')
 
-        self.x_coord_label = QLabel('X Coorinate:')
+        self.x_coord_label = QLabel('X Coordinate:')
         self.x_coord_input = QLineEdit()
-        self.x_coord_input.setValidator(QIntValidator())
-        self.x_coord_input.setMaxLength(4)
+        self.x_coord_input.setText('0.00')
+        self.x_coord_input.setValidator(QDoubleValidator())
+        self.x_coord_input.setMaxLength(6)
 
-        self.y_coord_label = QLabel('Y Coorinate:')
+        self.y_coord_label = QLabel('Y Coordinate:')
         self.y_coord_input = QLineEdit()
-        self.y_coord_input.setValidator(QIntValidator())
-        self.y_coord_input.setMaxLength(4)
+        self.y_coord_input.setText('0.00')
+        self.y_coord_input.setValidator(QDoubleValidator())
+        self.y_coord_input.setMaxLength(6)
 
-        self.z_coord_label = QLabel('Z Coorinate:')
+        self.z_coord_label = QLabel('Z Coordinate:')
         self.z_coord_input = QLineEdit()
-        self.z_coord_input.setValidator(QIntValidator())
-        self.z_coord_input.setMaxLength(4)
+        self.z_coord_input.setText('0.00')
+        self.z_coord_input.setValidator(QDoubleValidator())
+        self.z_coord_input.setMaxLength(6)
 
         joint_headers = [self.joint_1_header, self.joint_2_header, self.joint_3_header,
                          self.joint_4_header, self.joint_5_header, self.joint_6_header]
@@ -422,27 +425,36 @@ class App(QWidget):
         self.readout_6.setText(str(self.saved_degree_rows[final_joint_pos][5]))
     
     def ik_move(self):
-        x_coord = int(self.x_coord_input.text())
-        y_coord = int(self.y_coord_input.text())
-        z_coord = int(self.z_coord_input.text())
+        x_coord = float(self.x_coord_input.text())
+        y_coord = float(self.y_coord_input.text())
+        z_coord = float(self.z_coord_input.text())
 
-        ik.to_coordinate(x_coord, y_coord, z_coord)
+        ik.to_coordinate(
+            bc.joint_angles[0], bc.joint_angles[1], bc.joint_angles[2], x_coord, y_coord, z_coord, 'parallel')
+        
+        # update the angles between joints
+        bc.joint_angles[0] = ik.deltas[0]
+        bc.joint_angles[1] = ik.deltas[1]
+        bc.joint_angles[2] = ik.deltas[2]
+        
+        # calculate the new absolute position of each joint
+        joint_2_new_position = float(self.joint_2_current_degrees_label.text()) + ik.deltas[0]
+        joint_3_new_position = float(self.joint_3_current_degrees_label.text()) + ik.deltas[1]
+        joint_5_new_position = float(self.joint_5_current_degrees_label.text()) + ik.deltas[2]
+        
+        # update the readout of where the joints are supposed to be
+        self.readout_2.setText(str(joint_2_new_position))
+        self.readout_3.setText(str(joint_3_new_position))
+        self.readout_5.setText(str(joint_5_new_position))
 
-        """
-        these thetas correspond with only these joints:
-        theta 1: joint 2
-        theta 2: joint 3
-        theta 3: joint 5
-        """
-        print(ik.theta_1, ik.theta_2, ik.theta_3)
-
+        # clears all input to prep for new coordinates
         self.x_coord_input.clear()
         self.y_coord_input.clear()
         self.z_coord_input.clear()
-
-        # update slider positions
-        # update readout positions
-        # automatically move the arm to the coordinate
+        
+        self.x_coord_input.setText('0.00')
+        self.y_coord_input.setText('0.00')
+        self.z_coord_input.setText('0.00')
 
     def accept_all(self, is_zero):
         self.set_degrees(1, self.joint_1_slider, self.joint_1_current_degrees_label,
@@ -483,14 +495,6 @@ class App(QWidget):
                 
             self.set_joint_position_readouts(joint_number, joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout)
 
-            # readout_to_slider = float(readout_value.text()) * 100
-            # joint_degrees_label.setText(str(readout_value.text()))
-            # joint_slider.setSliderPosition(int(readout_to_slider))
-            # motor_encoder_count = dc.return_counts(
-            #     float(joint_degrees_label.text()), gear_ratio)
-            # encoder_readout.setText(str(motor_encoder_count))
-            
-
             if self.is_connected and self.is_calibrated:
                 self.return_encoder_counts(joint_degrees_label, gear_ratio, encoder_readout)
                 bc.move_axis_absolute(joint_number, self.motor_encoder_count)
@@ -507,7 +511,6 @@ class App(QWidget):
             self.motor_encoder_count = motor_encoder_count
             
             return self.motor_encoder_count
-        
 
     def create_message_box(self, window_title, window_text):
         msg_box = QMessageBox()
