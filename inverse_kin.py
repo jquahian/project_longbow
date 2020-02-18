@@ -72,7 +72,7 @@ def to_coordinate(joint_2_origin_angle, joint_2_3_angle, joint_5_6_angle, x, y, 
 def calculate_deltas(joint_2_origin_angle, joint_2_3_angle, joint_5_6_angle, theta_1, theta_2, theta_3, approach):
 	# joint 2 always relative to vertical z which will never change.
 	# theta_1 is now the new angle for joint 2 apply it to the current joint position
-	deltas[0] = theta_1
+	deltas[0] = theta_1 - joint_2_origin_angle
 	deltas[0] = round(deltas[0], 3)
 
 	# joint 3 is relative to joint 2
@@ -83,13 +83,10 @@ def calculate_deltas(joint_2_origin_angle, joint_2_3_angle, joint_5_6_angle, the
 	# joint 6 delta is going to depend on the approach that we want
 	# if parallel or perpendicular to the ground plane, we can calculate it based on the vertical axis which will never change
 	if approach == 'parallel':
-		deltas[2] = (theta_2 - theta_1) - 90
+		deltas[2] = theta_2 - theta_1 - joint_5_6_angle - 90
 	elif approach == 'perpendicular':
-		deltas[2] = (theta_2 - theta_1)
+		deltas[2] = theta_2 - theta_1 - joint_5_6_angle
 	
 	deltas[2] = round(deltas[2], 3)
 
-	print(
-		f'\ndelta joint 2: {deltas[0]} \ndelta joint 3: {deltas[1]} \ndelta joint 6: {deltas[2]}')
- 
 	return deltas[0], deltas[1], deltas[2]

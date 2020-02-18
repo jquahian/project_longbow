@@ -71,16 +71,16 @@ joint_6_calibration = [joint_6_home_pos, joint_6_max, joint_6_rest_pos]
 joint_1_origin_angle = 0
 joint_2_origin_angle = 0
 joint_2_3_angle = 90
-joint_3_4_angle = 0
 joint_4_5_angle = 0
 joint_5_6_angle = 0
+joint_6_tool_angle = 0
 
 joint_angles = [joint_1_origin_angle,
     			joint_2_origin_angle,
                 joint_2_3_angle,
-                joint_3_4_angle,
                 joint_4_5_angle,
-                joint_5_6_angle]
+                joint_5_6_angle,
+                joint_6_tool_angle]
 
 def connect_to():
 	# global odrive_boards
