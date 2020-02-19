@@ -23,6 +23,11 @@ board_2_num = '387F37573437'
 # board with axis 5, 6
 board_3_num = '207D37A53548'
 
+default_vel_limit = 120000
+traj_accel_limit = 25000
+traj_decel_limit = 25000
+traj_vel_limit = 0.9 * default_vel_limit
+
 odrive_1 = 0
 odrive_2 = 0
 odrive_3 = 0
@@ -108,6 +113,11 @@ def calibrate_all():
 		print(f'\n{board} axis 0 in CLOSED LOOP CONTROL')
 		board.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
+		board.axis0.conroller.config.vel_limit = default_vel_limit
+		board.axis0.trap_traj.config.vel_limit = traj_vel_limit
+		board.axis0.trap_traj.config.vel_limit = traj_accel_limit
+		board.axis0.trap_traj.config.vel_limit = traj_decel_limit
+
 		time.sleep(0.5)
 
 		print(f'\nnow calibrating {board} axis 1')
@@ -117,7 +127,12 @@ def calibrate_all():
 
 		print(f'\n{board} axis 1 in CLOSED LOOP CONTROL')
 		board.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
-
+  
+		board.axis1.conroller.config.vel_limit = default_vel_limit
+		board.axis1.trap_traj.config.vel_limit = traj_vel_limit
+		board.axis1.trap_traj.config.vel_limit = traj_accel_limit
+		board.axis1.trap_traj.config.vel_limit = traj_decel_limit
+  
 	print('\n\n calibration complete')
 
 def move_axis_incremental(motor_axis, num_degrees, axis_value):
@@ -143,22 +158,22 @@ def move_axis_incremental(motor_axis, num_degrees, axis_value):
 def move_axis_absolute(motor_axis, encoder_counts):
 
 	if motor_axis == 1:
-		odrive_boards[0].axis0.controller.pos_setpoint = (joint_1_calibration[0] - encoder_counts)
+		odrive_boards[0].axis0.controller.move_to_pos(joint_1_calibration[0] - encoder_counts)
 
 	if motor_axis == 2:
-		odrive_boards[0].axis1.controller.pos_setpoint = (joint_2_calibration[0] - encoder_counts)
+		odrive_boards[0].axis1.controller.move_to_pos(joint_2_calibration[0] - encoder_counts)
 
 	if motor_axis == 3:
-		odrive_boards[1].axis0.controller.pos_setpoint = (joint_3_calibration[0] - encoder_counts)
+		odrive_boards[1].axis0.controller.move_to_pos(joint_3_calibration[0] - encoder_counts)
 
 	if motor_axis == 4:
-		odrive_boards[1].axis1.controller.pos_setpoint = (joint_4_calibration[0] - encoder_counts)
+		odrive_boards[1].axis1.controller.move_to_pos(joint_4_calibration[0] - encoder_counts)
 
 	if motor_axis == 5:
-		odrive_boards[2].axis0.controller.pos_setpoint = (joint_5_calibration[0] - encoder_counts)
+		odrive_boards[2].axis0.controller.move_to_pos(joint_5_calibration[0] - encoder_counts)
 
 	if motor_axis == 6:
-		odrive_boards[2].axis1.controller.pos_setpoint = (joint_6_calibration[0] - encoder_counts)
+		odrive_boards[2].axis1.controller.move_to_pos(joint_6_calibration[0] - encoder_counts)
   
 def move_to_saved_pos(pos_index):
 	if pos_index < len(j1_pos):
