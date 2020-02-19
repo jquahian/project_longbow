@@ -10,7 +10,7 @@ pin 6 = joint 5
 pin 7 = joint 6
 """
 
-pin = 2
+pin = 4
 
 port = 0
 
