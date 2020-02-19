@@ -23,9 +23,9 @@ board_2_num = '387F37573437'
 # board with axis 5, 6
 board_3_num = '207D37A53548'
 
-default_vel_limit = 120000
-traj_accel_limit = 25000
-traj_decel_limit = 25000
+default_vel_limit = 250000
+traj_accel_limit = 30000
+traj_decel_limit = 50000
 traj_vel_limit = 0.9 * default_vel_limit
 
 odrive_1 = 0
@@ -113,7 +113,7 @@ def calibrate_all():
 		print(f'\n{board} axis 0 in CLOSED LOOP CONTROL')
 		board.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 
-		board.axis0.conroller.config.vel_limit = default_vel_limit
+		board.axis0.controller.config.vel_limit = default_vel_limit
 		board.axis0.trap_traj.config.vel_limit = traj_vel_limit
 		board.axis0.trap_traj.config.vel_limit = traj_accel_limit
 		board.axis0.trap_traj.config.vel_limit = traj_decel_limit
@@ -128,7 +128,7 @@ def calibrate_all():
 		print(f'\n{board} axis 1 in CLOSED LOOP CONTROL')
 		board.axis1.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
   
-		board.axis1.conroller.config.vel_limit = default_vel_limit
+		board.axis1.controller.config.vel_limit = default_vel_limit
 		board.axis1.trap_traj.config.vel_limit = traj_vel_limit
 		board.axis1.trap_traj.config.vel_limit = traj_accel_limit
 		board.axis1.trap_traj.config.vel_limit = traj_decel_limit
@@ -138,22 +138,22 @@ def calibrate_all():
 def move_axis_incremental(motor_axis, num_degrees, axis_value):
 	# send commands to each joint by degrees
 	if motor_axis == 1:
-		odrive_boards[0].axis0.controller.pos_setpoint += (num_degrees * axis_value)
+		odrive_boards[0].axis0.controller.move_incremental(num_degrees * axis_value, False)
 	
 	if motor_axis == 2:
-		odrive_boards[0].axis1.controller.pos_setpoint += (num_degrees * axis_value)
+		odrive_boards[0].axis1.controller.move_incremental(num_degrees * axis_value, False)
 
 	if motor_axis == 3:
-		odrive_boards[1].axis0.controller.pos_setpoint += (num_degrees * axis_value)
+		odrive_boards[1].axis0.controller.move_incremental(num_degrees * axis_value, False)
 
 	if motor_axis == 4:
-		odrive_boards[1].axis1.controller.pos_setpoint += (num_degrees * axis_value)
+		odrive_boards[1].axis1.controller.move_incremental(num_degrees * axis_value, False)
 
 	if motor_axis == 5:
-		odrive_boards[2].axis0.controller.pos_setpoint += (num_degrees * axis_value)
+		odrive_boards[2].axis0.controller.move_incremental(num_degrees * axis_value, False)
 
 	if motor_axis == 6:
-		odrive_boards[2].axis1.controller.pos_setpoint += (num_degrees * axis_value)
+		odrive_boards[2].axis1.controller.move_incremental(num_degrees * axis_value, False)
 
 def move_axis_absolute(motor_axis, encoder_counts):
 
@@ -212,7 +212,7 @@ def home_axis(pin_num, joint_num, gear_reduction, joint_calibration_array, direc
 
 		# move in 2 degree incriments until we hit the limit switch
 		if joint_limit_status is True:
-			move_axis_incremental(joint_num, dc.return_counts(1.0, gear_reduction), direction_modifier)
+			move_axis_incremental(joint_num, dc.return_counts(3.0, gear_reduction), direction_modifier)
 		else:
 			buffer_counter += 1
 			if buffer_counter >= 2:
