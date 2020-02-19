@@ -5,14 +5,14 @@ import pyfirmata
 import degrees_calc as dc
 from odrive.enums import *
 
-# port = 0
+port = 0
 
-# arduino_board = pyfirmata.Arduino(f'/dev/ttyACM{str(port)}')
+arduino_board = pyfirmata.Arduino(f'/dev/ttyACM{str(port)}')
 
-# it = pyfirmata.util.Iterator(arduino_board)
-# it.start()
+it = pyfirmata.util.Iterator(arduino_board)
+it.start()
 
-# time.sleep(5)
+time.sleep(5)
 
 # board with axis 1, 2
 board_1_num = '20873592524B'

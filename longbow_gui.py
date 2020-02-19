@@ -467,9 +467,9 @@ class App(QWidget):
         self.y_coord_input.clear()
         self.z_coord_input.clear()
         
-        self.x_coord_input.setText('0.00')
-        self.y_coord_input.setText('0.00')
-        self.z_coord_input.setText('0.00')
+        self.x_coord_input.setText(str(x_coord))
+        self.y_coord_input.setText(str(y_coord))
+        self.z_coord_input.setText(str(z_coord))
 
     def accept_all(self, is_zero):
         # NEW ANGLES
@@ -527,7 +527,7 @@ class App(QWidget):
             self.set_joint_position_readouts(joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout)
             
             if self.is_connected and self.is_calibrated:
-                self.return_encoder_counts(joint_degrees_label, gear_ratio, encoder_readout)
+                self.return_encoder_counts(float(joint_degrees_label.text()), gear_ratio, float(encoder_readout.text()))
                 bc.move_axis_absolute(joint_number, self.motor_encoder_count)
     def set_joint_position_readouts(self, joint_slider, joint_degrees_label, readout_value, gear_ratio, encoder_readout):
             readout_to_slider = float(readout_value.text()) * 100
